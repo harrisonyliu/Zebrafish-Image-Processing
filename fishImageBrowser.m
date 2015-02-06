@@ -61,11 +61,7 @@ handles.color_bound = get(handles.axes1,'CLim');
 
 %Autorotating fish and processing
 im = handles.current_data(:,:,1);
-tic
 res = autorotate_small(handles.current_data(:,:,1),handles.current_data(:,:,end));
-disp('Locating brain takes this long:');
-toc
-tic
 try
     first_crop = handles.current_data(res.crop1(1):res.crop1(2),res.crop1(3):res.crop1(4),1:end-1);
 catch err
@@ -75,9 +71,7 @@ rotate_im = zeros(size(first_crop));
 for i = 1:size(first_crop,3)
 rotate_im(:,:,i) = imrotate(first_crop(:,:,i),res.phi,'crop');
 end
-disp('Rotating images takes this long: ');
-toc
-tic
+
 final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4),:);
 imagesc(final_crop(:,:,1),'Parent',handles.axes4);colormap gray; axis image;axis off;axes(handles.axes4);
 hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
@@ -92,8 +86,6 @@ for i = 1:size(neuron_crop,1)
     end
 end
 imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
-disp('Cropping and z-project takes this long');
-toc
 
 %Saving the z-projected images
 mkdir(fullfile('F:\Zebrafish neuron projections', date));

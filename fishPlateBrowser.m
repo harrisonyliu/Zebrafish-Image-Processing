@@ -70,7 +70,6 @@ function varargout = fishPlateBrowser_OutputFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Get default command line output from handles structure
-handles.output
 assignin('base','x',handles.output);
 c = evalin('base','x');
 assignin('base','y',c);
