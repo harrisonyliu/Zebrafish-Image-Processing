@@ -52,8 +52,8 @@ function fishImageBrowser_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to fishImageBrowser (see VARARGIN)
 handles.current_data = varargin{1};
 handles.well_name = varargin{2};
-
 handles.maxNum = size(handles.current_data,3) - 1;
+handles.
 imagesc(handles.current_data(:,:,1),'Parent',handles.axes1);colormap gray;axis image;axis off;
 axes(handles.axes1);title(['Fish Z-stack 1 of ' num2str(handles.maxNum)]);
 imagesc(handles.current_data(:,:,end),'Parent',handles.axes2);colormap gray;axis image;axis off;
@@ -89,8 +89,8 @@ end
 imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
 
 %Saving the z-projected images
-mkdir(fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date));
-fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, [handles.well_name '.tif']);
+mkdir(fullfile('F:\Zebrafish neuron projections', date));
+fname_neuron = fullfile('F:\Zebrafish neuron projections', date, [handles.well_name '.tif']);
 z_proj = uint16(z_proj); imwrite(z_proj,fname_neuron);
 
 set(handles.slider1,'Max',handles.maxNum);
