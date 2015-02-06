@@ -1,6 +1,6 @@
 function res = autorotate_small(im,bf)
 % [im_crop_final im_crop_final_bf, eye1, eye2, neuron, midpt]
-scale = 2;
+scale = 2; %We wish to do all the processing on a half-sized image
 im = imresize(im,1/scale);
 bf = imresize(bf,1/scale);
 
