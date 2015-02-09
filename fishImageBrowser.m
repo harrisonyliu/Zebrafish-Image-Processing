@@ -90,7 +90,13 @@ imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
 
 %Saving the z-projected images
 mkdir(fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date));
-fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, [handles.well_name '.tif']);
+well = strfind(handles.well_name,'(');
+if isempty(well) == 0
+    newname = [handles.well_name 'wv Cy3 - Cy3).tif'];
+else
+    newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
+end
+fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, newname);
 z_proj = uint16(z_proj); imwrite(z_proj,fname_neuron);
 
 set(handles.slider1,'Max',handles.maxNum);
