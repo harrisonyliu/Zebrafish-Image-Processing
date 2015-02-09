@@ -15,7 +15,6 @@ end
 [names_list,order] = sort(names_list');
 
 %Now create the image array and start filling it in
-tic
 temp_name = filenames(1).name;
 temp_im = imread(fullfile(folder,temp_name));
 w = size(temp_im,1);
@@ -27,8 +26,6 @@ for i = 2:numel(filenames)
     temp_name = filenames(order(i)).name;
     im_array(:,:,i) = imread(fullfile(folder,temp_name));
 end
-disp('Reading image files takes this long: ');
-toc
 
 fishImageBrowser(im_array, well_name);
 % showFish(im_array);

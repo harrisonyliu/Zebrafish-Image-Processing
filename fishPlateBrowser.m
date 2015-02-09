@@ -88,13 +88,6 @@ if iscell(parent_folder) == 1
 end
 
 handles.folder_names = dir(parent_folder);
-handles.num_folders = numel(handles.folder_names) - 2;
-popup_String = cell(1,handles.num_folders);
-for i = 1:handles.num_folders
-    popup_String{i} = ['Pose ' num2str(i)];
-end
-set(handles.popupmenu1,'String',popup_String);
-set(handles.text2,'String',popup_String{1});
 guidata(hObject, handles);
 
 
@@ -1732,42 +1725,6 @@ try
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
-
-
-% --- Executes on selection change in popupmenu1.
-function popupmenu1_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu1 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu1
-val = get(handles.popupmenu1,'Value');
-handles.pose_folder = handles.folder_names(val+2).name;
-str = ['Pose subfolder: ' handles.pose_folder];
-set(handles.text2,'String',str);
-handles.path_name = fullfile(get(handles.edit1,'String'),handles.pose_folder);
-guidata(hObject, handles);
-well_Letter = {'A','B','C','D','E','F','G','H'};
-well_Number = [1,2,3,4,5,6,7,8,9,10,11,12];
-
-for i = 1:numel(well_Letter)
-    for j = 1:numel(well_Number)
-        folder = handles.path_name;
-        if iscell(folder) == 1
-            folder = folder{1};
-        end
-        wellName = [well_Letter{i} ' - ' num2str(well_Number(j))];
-        files_found = dir(fullfile(folder,['*' wellName '*']));
-        pushbutton_num = (i-1)*12 + j;
-        pushbutton_string = ['handles.pushbutton' num2str(pushbutton_num)];
-        set(eval(pushbutton_string),'ForegroundColor','black');
-        if numel(files_found) == 0
-            set(eval(pushbutton_string),'BackgroundColor',[1 0.6 0.78]);
-        end
-    end
-end
-
 
 % --- Executes during object creation, after setting all properties.
 function popupmenu1_CreateFcn(hObject, eventdata, handles)

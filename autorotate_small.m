@@ -43,7 +43,7 @@ bounds = [(x_center - 1), (size(im,1) - x_center), (y_center - 1), (size(im,2) -
 crop_size = bounds(find(bounds == min(bounds)));
 cropy1 = x_center - crop_size; cropy2 = x_center + crop_size;
 cropx1 = y_center - crop_size; cropx2 = y_center + crop_size;
-res.crop1 = 2*[cropy1 cropy2 cropx1 cropx2];
+res.crop1 = 2*[round(cropy1) round(cropy2) round(cropx1) round(cropx2)];
 im_cropped = im(cropy1:cropy2, cropx1:cropx2);
 im_cropped_bw = im_closed(cropy1:cropy2, cropx1:cropx2);
 im_cropped_bf = bf(cropy1:cropy2, cropx1:cropx2);
@@ -78,7 +78,7 @@ cropped_center = round(size(im_rotated,1)/2);
 
 smallcropy1 = cropped_center - 450/scale; smallcropy2 = cropped_center + 450/scale;
 smallcropx1 = cropped_center - 250/scale; smallcropx2 = cropped_center + 250/scale;
-res.crop2 = 2*[smallcropy1 smallcropy2 smallcropx1 smallcropx2];
+res.crop2 = 2*[round(smallcropy1) round(smallcropy2) round(smallcropx1) round(smallcropx2)];
 try
 im_crop_final = im_rotated(smallcropy1:smallcropy2, smallcropx1:smallcropx2);
 catch err
@@ -146,8 +146,8 @@ midpt_x = x0 + pupil_distance/2*cosd(theta);
 midpt_y = y0 + pupil_distance/2*sind(theta);
 neuron_x = midpt_x + neuron_distance * sind(-theta);
 neuron_y = midpt_y + neuron_distance * cosd(-theta);
-res.eye1 = 2*[x1, y1];res.eye2 = 2*[x2, y2];
-res.neuron = 2*[neuron_x, neuron_y];res.midpt = 2*[midpt_x, midpt_y];
+res.eye1 = 2*[round(x1), round(y1)];res.eye2 = 2*[round(x2), round(y2)];
+res.neuron = 2*[round(neuron_x), round(neuron_y)];res.midpt = 2*[round(midpt_x), round(midpt_y)];
 
 % figure();imagesc(im_crop_final);colormap gray; axis off;axis image;title('Final Crop');
 % title('After Tail-Head Correction');hold on;plot(x1,y1,'r*');plot(x2,y2,'r*');plot([x1 x2],[y1 y2],'r-');
