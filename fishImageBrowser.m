@@ -72,9 +72,7 @@ end
 % for i = 1:size(first_crop,3)
 % rotate_im(:,:,i) = imrotate(first_crop(:,:,i),res.phi,'crop');
 % end
-% rotate_im = imrotate(first_crop,res.phi,'crop');
-first_crop_gpu = gpuArray(uint16(first_crop));
-rotate_im = imrotate(first_crop_gpu,res.phi,'crop');
+rotate_im = imrotate(first_crop,res.phi,'crop');
 
 final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4),:);
 imagesc(final_crop(:,:,1),'Parent',handles.axes4);colormap gray; axis image;axis off;axes(handles.axes4);
