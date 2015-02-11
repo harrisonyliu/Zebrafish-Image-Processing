@@ -77,20 +77,24 @@ im_rotated_bf = imrotate(im_cropped_bf, phi,'crop');
 cropped_center = round(size(im_rotated,1)/2);
 
 smallcropy1 = cropped_center - 500/scale; smallcropy2 = cropped_center + 500/scale;
+smallcropy1 = 1; smallcropy2 = size(im_rotated,1);
 smallcropx1 = cropped_center - 250/scale; smallcropx2 = cropped_center + 250/scale;
 res.crop2 = 2*[round(smallcropy1) round(smallcropy2) round(smallcropx1) round(smallcropx2)];
 try
-    im_crop_final = im_rotated(smallcropy1:smallcropy2, smallcropx1:smallcropx2);
+    im_crop_final = im_rotated(:, smallcropx1:smallcropx2);
+    % im_crop_final = im_rotated(smallcropy1:smallcropy2, smallcropx1:smallcropx2);
 catch err
     disp 'Fish cannot be cropped out - likely a bad image';
     res = [];
 %     figure();imagesc(bf);colormap gray;axis image;
     return
 end
-im_crop_final_bw = im_rotated_bw(smallcropy1:smallcropy2, smallcropx1:smallcropx2);
-im_crop_final_bf = im_rotated_bf(smallcropy1:smallcropy2, smallcropx1:smallcropx2);
-% figure();imshowpair(im,im_rotated,'montage');
-% figure();imagesc(im_cropped_bf);colormap gray;axis image;
+im_crop_final_bw = im_rotated_bw(:, smallcropx1:smallcropx2);
+im_crop_final_bf = im_rotated_bf(:, smallcropx1:smallcropx2);
+% im_crop_final_bw = im_rotated_bw(smallcropy1:smallcropy2, smallcropx1:smallcropx2);
+% im_crop_final_bf = im_rotated_bf(smallcropy1:smallcropy2, smallcropx1:smallcropx2);
+figure();imshowpair(im,im_rotated,'montage');
+figure();imagesc(im_cropped_bf);colormap gray;axis image;
 
 cc = detectEyes(im_crop_final_bf,scale);
 centroids = regionprops(cc,'centroid','area');

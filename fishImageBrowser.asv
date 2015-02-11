@@ -97,7 +97,7 @@ else
     newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
 end
 fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, newname);
-z_proj = gather(z_proj); imwrite(z_proj,fname_neuron);
+z_proj = uint16(z_proj); imwrite(z_proj,fname_neuron);
 
 set(handles.slider1,'Max',handles.maxNum);
 set(handles.slider1,'Min',1);
