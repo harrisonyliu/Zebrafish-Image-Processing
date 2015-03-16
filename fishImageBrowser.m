@@ -60,6 +60,9 @@ imagesc(handles.current_data(:,:,end),'Parent',handles.axes2);colormap gray;axis
 axes(handles.axes2);title(handles.well_name);axes(handles.axes1);
 handles.color_bound = get(handles.axes1,'CLim');
 
+%Directory to save processed images in
+mkdir(fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date));
+
 % Choose default command line output for fishImageBrowser
 handles.output = hObject;
 
@@ -358,21 +361,69 @@ end
 
 
 % --- Executes on button press in pushbutton5.
-function pushbutton5_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton5 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-[lineX, lineY] = getline(handles.axes1);
-rotate_im(lineX, lineY, hObject, handles);
+    function pushbutton5_Callback(hObject, eventdata, handles)
+        % hObject    handle to pushbutton5 (see GCBO)
+        % eventdata  reserved - to be defined in a future version of MATLAB
+        % handles    structure with handles and user data (see GUIDATA)
+        [lineX, lineY] = getline(handles.axes1);
+        rotate_im_fcn(lineX, lineY, hObject, handles);
+    
+    function rotate_im_fcn(lineX, lineY, hObject, handles)
+        deltay = lineY(2) - lineY(1);
+        deltax = lineX(2) - lineX(1);
+        slope = deltay / deltax;
+        theta = abs(atand(slope));
+        numIminStack = size(handles.current_data,3);
+        
+        if deltax > 0 && deltay > 0
+            phi = 270 + theta;
+        elseif deltax > 0 && deltay < 0
+            phi = 270 - theta;
+        elseif deltax < 0 && deltay > 0
+            phi = 90 - theta;
+        else
+            phi = 90 +  theta;
+        end
+        
+        temp = imrotate(handles.current_data(:,:,1),phi);
+        temp_rotate = zeros([size(temp),numIminStack]);
+        temp_rotate(:,:,1) = temp;
+        for i = 2:numIminStack
+            temp_rotate(:,:,i) = imrotate(handles.current_data(:,:,i),phi);
+        end
+        handles.current_data = temp_rotate;
+        guidata(hObject,handles);
+        changeImage(handles.currentImIdx,hObject,handles)
+    
+    % --- Executes on button press in pushbutton6.
+        function pushbutton6_Callback(hObject, eventdata, handles)
+            % hObject    handle to pushbutton6 (see GCBO)
+            % eventdata  reserved - to be defined in a future version of MATLAB
+            % handles    structure with handles and user data (see GUIDATA)
+            [x,y] = getpts(handles.axes1);
+            z_proj = neuron_z_proj(x,y,handles.current_data(:,:,1:end-1));
+            imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
+            save_neuron(z_proj,handles);
+        
+        function centered_zproject(x,y,hObject,handles);
+            showFish(handles.current_data(y - 85:y + 85, x - 85:x + 85, :));
+            
+function z_proj = neuron_z_proj(x,y,im)
+%This function will take the image passed to it, and crop out a 191 x 221
+%z-project image around the central point
+neuron_x1 = x - 95; neuron_x2 = x + 95;
+neuron_y1 = y - 110; neuron_y2 = y + 110;
+neuron_crop = im(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
+%Doing max z-projection
+z_proj = max(neuron_crop,[],3);
 
-
-% --- Executes on button press in pushbutton6.
-function pushbutton6_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton6 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-[x,y] = getpts(handles.axes1);
-centered_zproject(x,y,hObject,handles);
-
-function centered_zproject(x,y,hObject,handles);
-showFish(handles.current_data(y - 85:y + 85, x - 85:x + 85, :));
+function save_neuron(z_proj, handles)
+    %Saving the z-projected images
+    well = strfind(handles.well_name,'(');
+    if isempty(well) == 0
+        newname = [handles.well_name 'wv Cy3 - Cy3).tif'];
+    else
+        newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
+    end
+    fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, newname);
+    imwrite(z_proj,fname_neuron);

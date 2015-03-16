@@ -88,7 +88,6 @@ guidata(hObject, handles);
 
 % UIWAIT makes wormImageBrowser wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
-end
 
 function changeImage(imNum,hObject,handles)
 axes(handles.axes1);
@@ -96,7 +95,8 @@ imagesc(handles.current_data(:,:,imNum),handles.color_bound);colormap gray;axis 
 title(['Fish ' num2str(imNum) ' of ' num2str(handles.maxNum)]);
 handles.currentImIdx = imNum;
 guidata(hObject, handles);
-end
+
+
 
 % --- Outputs from this function are returned to the command line.
 function varargout = wormImageBrowser_OutputFcn(hObject, eventdata, handles)
@@ -107,7 +107,6 @@ function varargout = wormImageBrowser_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
-end
 
 
 % --- Executes on slider movement.
@@ -121,7 +120,6 @@ changeImage(imNum, hObject, handles);
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-end
 
 
 % --- Executes during object creation, after setting all properties.
@@ -133,7 +131,6 @@ function slider1_CreateFcn(hObject, eventdata, handles)
 % Hint: slider controls usually have a light gray background.
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor',[.9 .9 .9]);
-end
 end
 
 
@@ -159,23 +156,7 @@ try
     plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
     z_proj = neuron_z_proj(res.neuron(1),res.neuron(2),final_crop);
     imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
-    save_neuron(z_proj,handles);
-catch err
-    msgbox('Something is wrong with this fish! See command line for error. Try manually extracting neurons');
-end
-end
-
-function z_proj = neuron_z_proj(x,y,im)
-%This function will take the image passed to it, and crop out a 191 x 221
-%z-project image around the central point
-neuron_x1 = x - 95; neuron_x2 = x + 95;
-neuron_y1 = y - 110; neuron_y2 = y + 110;
-neuron_crop = im(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
-%Doing max z-projection
-z_proj = max(neuron_crop,[],3);
-end
-
-function save_neuron(z_proj, handles)
+    
     %Saving the z-projected images
     well = strfind(handles.well_name,'(');
     if isempty(well) == 0
@@ -185,7 +166,22 @@ function save_neuron(z_proj, handles)
     end
     fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, newname);
     imwrite(z_proj,fname_neuron);
+catch err
+    msgbox('Something is wrong with this fish! See command line for error. Try manually extracting neurons');
 end
+
+    function z_proj = neuron_z_proj(x,y,im)
+        %This function will take the image passed to it, and crop out a 191 x 221
+        %z-project image around the central point
+        neuron_x1 = x - 95; x = x + 95;
+        neuron_y1 = y - 110; y = y + 110;
+        neuron_crop = final_crop(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
+        %Doing max z-projection
+        z_proj = max(neuron_crop,[],3);
+    end
+    
+    function save_neuron
+    end
 
 function getImNum(hObject, eventdata, handles, moveAmt)
 imNum = round(get(handles.slider1,'Value')) + moveAmt;
@@ -206,7 +202,6 @@ elseif numel(find(handles.badImages == imNum)) > 0
 else
     set(handles.slider1,'Value',imNum);
     changeImage(imNum, hObject, handles);
-end
 end
 
 % --- Executes on key press with focus on figure1 and none of its controls.
@@ -233,29 +228,44 @@ if strcmp(eventdata.Key,'downarrow') == 1
     getImNum(hObject, eventdata, handles, -10)
 end
 
-
 if strcmp(eventdata.Key,'1') == 1
     %Autorotating fish and processing
     im = handles.current_data(:,:,1);
-res = autorotate_small(handles.current_data(:,:,1),handles.current_data(:,:,end));
-try
-    first_crop = handles.current_data(res.crop1(1):res.crop1(2),res.crop1(3):res.crop1(4),1:end-1);
-    % rotate_im = zeros(size(first_crop));
-    % for i = 1:size(first_crop,3)
-    % rotate_im(:,:,i) = imrotate(first_crop(:,:,i),res.phi,'crop');
-    % end
-    rotate_im = imrotate(first_crop,res.phi,'crop');
-    
-    final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4),:);
-    imagesc(final_crop(:,:,1),'Parent',handles.axes4);colormap gray; axis image;axis off;axes(handles.axes4);
-    hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
-    plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
-    z_proj = neuron_z_proj(res.neuron(1),res.neuron(2),final_crop);
-    imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
-    save_neuron(z_proj,handles);
-catch err
-    msgbox('Something is wrong with this fish! See command line for error. Try manually extracting neurons');
-end
+    res = autorotate_small(handles.current_data(:,:,1),handles.current_data(:,:,end));
+    try
+        first_crop = handles.current_data(res.crop1(1):res.crop1(2),res.crop1(3):res.crop1(4),1:end-1);
+        % rotate_im = zeros(size(first_crop));
+        % for i = 1:size(first_crop,3)
+        % rotate_im(:,:,i) = imrotate(first_crop(:,:,i),res.phi,'crop');
+        % end
+        rotate_im = imrotate(first_crop,res.phi,'crop');
+        
+        final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4),:);
+        imagesc(final_crop(:,:,1),'Parent',handles.axes4);colormap gray; axis image;axis off;axes(handles.axes4);
+        hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
+        plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
+        neuron_x1 = res.neuron(1) - 95; neuron_x2 = res.neuron(1) + 95;
+        neuron_y1 = res.neuron(2) - 110; neuron_y2 = res.neuron(2) + 110;
+        neuron_crop = final_crop(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
+        
+        %Doing max z-projection
+        z_proj = max(neuron_crop,[],3);
+        imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
+        
+        %Saving the z-projected images
+        mkdir(fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date));
+        well = strfind(handles.well_name,'(');
+        if isempty(well) == 0
+            newname = [handles.well_name 'wv Cy3 - Cy3).tif'];
+        else
+            newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
+        end
+        fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, newname);
+        imwrite(z_proj,fname_neuron);
+    catch err
+        msgbox('Something is wrong with this fish! See command line for error. Try manually extracting neurons');
+    end
+    guidata(hObject,handles); %REMEMBER TO UPDATE THE HANDLES STRUCTURE!!!
 end
 
 if strcmp(eventdata.Key,'2') == 1
@@ -276,10 +286,7 @@ end
 
 if strcmp(eventdata.Key,'5') == 1
     [x,y] = getpts(handles.axes1);
-    z_proj = neuron_z_proj(x,y,handles.current_data(:,:,1:end-1));
-    imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
-    save_neuron(z_proj,handles);
-end
+    centered_zproject(round(x),round(y),hObject,handles);
 end
 
 function centered_zproject(x,y,hObject,handles);
@@ -304,7 +311,6 @@ temp.numPix(end+1) = numPix;
 temp.normVar(end+1) = normVar;
 temp.wellName{end+1} = handles.well_name;
 assignin('base','fish_data',temp);
-end
 
 function saveTruncatedImages(hObject,handles,fname)
 truncated_Images = handles.current_data;
@@ -314,7 +320,6 @@ numel(handles.badImages);
 truncated_Images(badImages) = [];
 numel(truncated_Images);
 save(fname,'truncated_Images');
-end
 
 
 % --- Executes on button press in pushbutton3.
@@ -326,7 +331,6 @@ function pushbutton3_Callback(hObject, eventdata, handles)
 [fname,PathName,FilterIndex] = uiputfile('*.mat','Saving Edited Worms',...
     get(handles.edit1,'String'));
 saveTruncatedImages(hObject,handles,fname);
-end
 
 
 function edit1_Callback(hObject, eventdata, handles)
@@ -336,7 +340,6 @@ function edit1_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of edit1 as text
 %        str2double(get(hObject,'String')) returns contents of edit1 as a double
-end
 
 
 % --- Executes during object creation, after setting all properties.
@@ -349,7 +352,6 @@ function edit1_CreateFcn(hObject, eventdata, handles)
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
-end
 end
 
 function setSelectionBlack(rect, hObject, handles)
@@ -367,7 +369,6 @@ ring_Avg = ring_Sum / ring_Area;
 handles.current_data{handles.currentImIdx}(y1:y2, x1:x2) = ring_Avg;
 guidata(hObject,handles); %REMEMBER TO UPDATE THE HANDLES STRUCTURE!!!
 changeImage(handles.currentImIdx, hObject, handles);
-end
 
 function crop_zproject(rect, hObject, handles)
 x1 = round(rect(1));
@@ -379,7 +380,6 @@ avg_x = round((x1 + x2)/2);
 % showFish(handles.current_data(y1:y2, x1:x2, :));
 [z_proj, numNeurons, numPix] = showFish(handles.current_data(avg_y - 120:avg_y + 120,...
     avg_x - 100:avg_x + 100, :));
-end
 
 function rotate_im_fcn(lineX, lineY, hObject, handles)
 deltay = lineY(2) - lineY(1);
@@ -398,11 +398,15 @@ else
     phi = 90 +  theta;
 end
 
-temp = imrotate(handles.current_data,phi);
-handles.current_data = temp;
+temp = imrotate(handles.current_data(:,:,1),phi);
+temp_rotate = zeros([size(temp),numIminStack]);
+temp_rotate(:,:,1) = temp;
+for i = 2:numIminStack
+    temp_rotate(:,:,i) = imrotate(handles.current_data(:,:,i),phi);
+end
+handles.current_data = temp_rotate;
 guidata(hObject,handles);
 changeImage(handles.currentImIdx,hObject,handles)
-end
 
 % --- Executes on button press in pushbutton4.
 function pushbutton4_Callback(hObject, eventdata, handles)
@@ -411,7 +415,6 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 rect = getrect(handles.axes1);
 crop_zproject(rect, hObject, handles)
-end
 
 
 % --- Executes on mouse press over figure background, over a disabled or
@@ -420,4 +423,3 @@ function figure1_WindowButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-end
