@@ -149,7 +149,7 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    poseSelectionWindowLarge(path_minus_pose, pose_names,wellName);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -200,7 +200,7 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    poseSelectionWindowLarge(path_minus_pose, pose_names,wellName);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -217,7 +217,7 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    poseSelectionWindowLarge(path_minus_pose, pose_names,wellName);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end

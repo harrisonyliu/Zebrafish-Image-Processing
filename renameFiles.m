@@ -1,4 +1,4 @@
-folder = 'F:\Zebrafish neuron projections\27-Jan-2015';
+folder = 'C:\Users\harri_000\Downloads\2015114 Filtered z projections';
 fnames = dir(folder);
 
 for i = 3:length(fnames)

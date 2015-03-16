@@ -60,53 +60,6 @@ imagesc(handles.current_data(:,:,end),'Parent',handles.axes2);colormap gray;axis
 axes(handles.axes2);title(handles.well_name);axes(handles.axes1);
 handles.color_bound = get(handles.axes1,'CLim');
 
-%Autorotating fish and processing
-im = handles.current_data(:,:,1);
-res = autorotate_small(handles.current_data(:,:,1),handles.current_data(:,:,end));
-try
-    first_crop = handles.current_data(res.crop1(1):res.crop1(2),res.crop1(3):res.crop1(4),1:end-1);
-catch err
-    msgbox('Something is wrong with this fish! See command line for error');
-end
-% rotate_im = zeros(size(first_crop));
-% for i = 1:size(first_crop,3)
-% rotate_im(:,:,i) = imrotate(first_crop(:,:,i),res.phi,'crop');
-% end
-rotate_im = imrotate(first_crop,res.phi,'crop');
-
-final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4),:);
-imagesc(final_crop(:,:,1),'Parent',handles.axes4);colormap gray; axis image;axis off;axes(handles.axes4);
-hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
-plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
-neuron_x1 = res.neuron(1) - 95; neuron_x2 = res.neuron(1) + 95;
-neuron_y1 = res.neuron(2) - 110; neuron_y2 = res.neuron(2) + 110;
-neuron_crop = final_crop(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
-
-%Doing max z-projection
-z_proj = max(neuron_crop,[],3);
-imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
-
-%Saving the z-projected images
-mkdir(fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date));
-well = strfind(handles.well_name,'(');
-if isempty(well) == 0
-    newname = [handles.well_name 'wv Cy3 - Cy3).tif'];
-else
-    newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
-end
-fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, newname);
-z_proj = gather(z_proj); imwrite(z_proj,fname_neuron);
-
-set(handles.slider1,'Max',handles.maxNum);
-set(handles.slider1,'Min',1);
-set(handles.slider1,'Value',1);
-set(handles.slider1,'SliderStep',[1/handles.maxNum , 3/handles.maxNum]);
-
-set(handles.slider1,'Max',handles.maxNum);
-set(handles.slider1,'Min',1);
-set(handles.slider1,'Value',1);
-set(handles.slider1,'SliderStep',[1/handles.maxNum , 3/handles.maxNum]);
-
 % Choose default command line output for fishImageBrowser
 handles.output = hObject;
 
@@ -114,6 +67,16 @@ handles.output = hObject;
 %final, curated image set
 handles.badImages = [];
 handles.currentImIdx = 1;
+
+set(handles.slider1,'Max',handles.maxNum);
+set(handles.slider1,'Min',1);
+set(handles.slider1,'Value',1);
+set(handles.slider1,'SliderStep',[1/handles.maxNum , 3/handles.maxNum]);
+
+set(handles.slider1,'Max',handles.maxNum);
+set(handles.slider1,'Min',1);
+set(handles.slider1,'Value',1);
+set(handles.slider1,'SliderStep',[1/handles.maxNum , 3/handles.maxNum]);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -174,6 +137,42 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+%Autorotating fish and processing
+im = handles.current_data(:,:,1);
+res = autorotate_small(handles.current_data(:,:,1),handles.current_data(:,:,end));
+try
+    first_crop = handles.current_data(res.crop1(1):res.crop1(2),res.crop1(3):res.crop1(4),1:end-1);
+    % rotate_im = zeros(size(first_crop));
+    % for i = 1:size(first_crop,3)
+    % rotate_im(:,:,i) = imrotate(first_crop(:,:,i),res.phi,'crop');
+    % end
+    rotate_im = imrotate(first_crop,res.phi,'crop');
+    
+    final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4),:);
+    imagesc(final_crop(:,:,1),'Parent',handles.axes4);colormap gray; axis image;axis off;axes(handles.axes4);
+    hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
+    plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
+    neuron_x1 = res.neuron(1) - 95; neuron_x2 = res.neuron(1) + 95;
+    neuron_y1 = res.neuron(2) - 110; neuron_y2 = res.neuron(2) + 110;
+    neuron_crop = final_crop(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
+    
+    %Doing max z-projection
+    z_proj = max(neuron_crop,[],3);
+    imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
+    
+    %Saving the z-projected images
+    mkdir(fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date));
+    well = strfind(handles.well_name,'(');
+    if isempty(well) == 0
+        newname = [handles.well_name 'wv Cy3 - Cy3).tif'];
+    else
+        newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
+    end
+    fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, newname);
+    imwrite(z_proj,fname_neuron);
+catch err
+    msgbox('Something is wrong with this fish! See command line for error. Try manually extracting neurons');
+end
 
 function getImNum(hObject, eventdata, handles, moveAmt)
 imNum = round(get(handles.slider1,'Value')) + moveAmt;
@@ -222,9 +221,42 @@ if strcmp(eventdata.Key,'downarrow') == 1
 end
 
 if strcmp(eventdata.Key,'1') == 1
-    imNum = round(get(handles.slider1,'Value'));
-    handles.badImages = [handles.badImages imNum];
-    getImNum(hObject, eventdata, handles, 1)
+%Autorotating fish and processing
+im = handles.current_data(:,:,1);
+res = autorotate_small(handles.current_data(:,:,1),handles.current_data(:,:,end));
+try
+    first_crop = handles.current_data(res.crop1(1):res.crop1(2),res.crop1(3):res.crop1(4),1:end-1);
+    % rotate_im = zeros(size(first_crop));
+    % for i = 1:size(first_crop,3)
+    % rotate_im(:,:,i) = imrotate(first_crop(:,:,i),res.phi,'crop');
+    % end
+    rotate_im = imrotate(first_crop,res.phi,'crop');
+    
+    final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4),:);
+    imagesc(final_crop(:,:,1),'Parent',handles.axes4);colormap gray; axis image;axis off;axes(handles.axes4);
+    hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
+    plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
+    neuron_x1 = res.neuron(1) - 95; neuron_x2 = res.neuron(1) + 95;
+    neuron_y1 = res.neuron(2) - 110; neuron_y2 = res.neuron(2) + 110;
+    neuron_crop = final_crop(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
+    
+    %Doing max z-projection
+    z_proj = max(neuron_crop,[],3);
+    imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
+    
+    %Saving the z-projected images
+    mkdir(fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date));
+    well = strfind(handles.well_name,'(');
+    if isempty(well) == 0
+        newname = [handles.well_name 'wv Cy3 - Cy3).tif'];
+    else
+        newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
+    end
+    fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, newname);
+    imwrite(z_proj,fname_neuron);
+catch err
+    msgbox('Something is wrong with this fish! See command line for error. Try manually extracting neurons');
+end
     guidata(hObject,handles); %REMEMBER TO UPDATE THE HANDLES STRUCTURE!!!
 end
 

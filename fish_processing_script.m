@@ -1,5 +1,8 @@
 load('F:\Zebrafish test images\2015.01.20 Wt BF and FL.mat');
 
+%This will simply autorotate and crop each fish, labeling the neurons, not
+%really necessary anymore!
+
 fish_processed = struct();
 fish_processed.FL = cell(0);
 fish_processed.BF = cell(0);

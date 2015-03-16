@@ -27,11 +27,11 @@ function varargout = fishImageBrowser(varargin)
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
-                   'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @wormImageBrowser_OpeningFcn, ...
-                   'gui_OutputFcn',  @wormImageBrowser_OutputFcn, ...
-                   'gui_LayoutFcn',  [] , ...
-                   'gui_Callback',   []);
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @wormImageBrowser_OpeningFcn, ...
+    'gui_OutputFcn',  @wormImageBrowser_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
@@ -56,6 +56,9 @@ imagesc(handles.current_data(:,:,1),'Parent',handles.axes1);colormap gray;axis i
 imagesc(handles.current_data(:,:,end),'Parent',handles.axes2);colormap gray;axis image;axis off;
 title(['Fish Z-stack 1 of ' num2str(handles.maxNum)]);
 handles.color_bound = get(handles.axes1,'CLim');
+
+%Directory to save processed images in
+mkdir(fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date));
 
 %Autorotating fish and processing
 res = autorotate(handles.current_data(:,:,1),handles.current_data(:,:,end));
@@ -95,7 +98,7 @@ guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = wormImageBrowser_OutputFcn(hObject, eventdata, handles) 
+function varargout = wormImageBrowser_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -135,6 +138,49 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+%Autorotating fish and processing
+im = handles.current_data(:,:,1);
+res = autorotate_small(handles.current_data(:,:,1),handles.current_data(:,:,end));
+try
+    first_crop = handles.current_data(res.crop1(1):res.crop1(2),res.crop1(3):res.crop1(4),1:end-1);
+    % rotate_im = zeros(size(first_crop));
+    % for i = 1:size(first_crop,3)
+    % rotate_im(:,:,i) = imrotate(first_crop(:,:,i),res.phi,'crop');
+    % end
+    rotate_im = imrotate(first_crop,res.phi,'crop');
+    
+    final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4),:);
+    imagesc(final_crop(:,:,1),'Parent',handles.axes4);colormap gray; axis image;axis off;axes(handles.axes4);
+    hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
+    plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
+    z_proj = neuron_z_proj(res.neuron(1),res.neuron(2),final_crop);
+    imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
+    
+    %Saving the z-projected images
+    well = strfind(handles.well_name,'(');
+    if isempty(well) == 0
+        newname = [handles.well_name 'wv Cy3 - Cy3).tif'];
+    else
+        newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
+    end
+    fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, newname);
+    imwrite(z_proj,fname_neuron);
+catch err
+    msgbox('Something is wrong with this fish! See command line for error. Try manually extracting neurons');
+end
+
+    function z_proj = neuron_z_proj(x,y,im)
+        %This function will take the image passed to it, and crop out a 191 x 221
+        %z-project image around the central point
+        neuron_x1 = x - 95; x = x + 95;
+        neuron_y1 = y - 110; y = y + 110;
+        neuron_crop = final_crop(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
+        %Doing max z-projection
+        z_proj = max(neuron_crop,[],3);
+    end
+    
+    function save_neuron
+    end
 
 function getImNum(hObject, eventdata, handles, moveAmt)
 imNum = round(get(handles.slider1,'Value')) + moveAmt;
@@ -182,9 +228,42 @@ if strcmp(eventdata.Key,'downarrow') == 1
 end
 
 if strcmp(eventdata.Key,'1') == 1
-    imNum = round(get(handles.slider1,'Value'));
-    handles.badImages = [handles.badImages imNum];
-    getImNum(hObject, eventdata, handles, 1)
+    %Autorotating fish and processing
+    im = handles.current_data(:,:,1);
+    res = autorotate_small(handles.current_data(:,:,1),handles.current_data(:,:,end));
+    try
+        first_crop = handles.current_data(res.crop1(1):res.crop1(2),res.crop1(3):res.crop1(4),1:end-1);
+        % rotate_im = zeros(size(first_crop));
+        % for i = 1:size(first_crop,3)
+        % rotate_im(:,:,i) = imrotate(first_crop(:,:,i),res.phi,'crop');
+        % end
+        rotate_im = imrotate(first_crop,res.phi,'crop');
+        
+        final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4),:);
+        imagesc(final_crop(:,:,1),'Parent',handles.axes4);colormap gray; axis image;axis off;axes(handles.axes4);
+        hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
+        plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
+        neuron_x1 = res.neuron(1) - 95; neuron_x2 = res.neuron(1) + 95;
+        neuron_y1 = res.neuron(2) - 110; neuron_y2 = res.neuron(2) + 110;
+        neuron_crop = final_crop(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
+        
+        %Doing max z-projection
+        z_proj = max(neuron_crop,[],3);
+        imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
+        
+        %Saving the z-projected images
+        mkdir(fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date));
+        well = strfind(handles.well_name,'(');
+        if isempty(well) == 0
+            newname = [handles.well_name 'wv Cy3 - Cy3).tif'];
+        else
+            newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
+        end
+        fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, newname);
+        imwrite(z_proj,fname_neuron);
+    catch err
+        msgbox('Something is wrong with this fish! See command line for error. Try manually extracting neurons');
+    end
     guidata(hObject,handles); %REMEMBER TO UPDATE THE HANDLES STRUCTURE!!!
 end
 
@@ -201,7 +280,7 @@ end
 
 if strcmp(eventdata.Key,'4') == 1
     [lineX, lineY] = getline(handles.axes1);
-    rotate_im(lineX, lineY, hObject, handles);
+    rotate_im_fcn(lineX, lineY, hObject, handles);
 end
 
 if strcmp(eventdata.Key,'5') == 1
@@ -211,10 +290,10 @@ end
 
 function centered_zproject(x,y,hObject,handles);
 [z_proj, numNeurons, numPix, normVar] = showFish(handles.current_data(y-100:y+100,...
-   x-85:x+85, :));
+    x-85:x+85, :));
 
 %Save all the data extracted from the cropped z projection
-try 
+try
     temp = evalin('base','fish_data');
 catch err
     temp = struct();
@@ -248,8 +327,8 @@ function pushbutton3_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % save(handles.current_data);
-    [fname,PathName,FilterIndex] = uiputfile('*.mat','Saving Edited Worms',...
-        get(handles.edit1,'String'));
+[fname,PathName,FilterIndex] = uiputfile('*.mat','Saving Edited Worms',...
+    get(handles.edit1,'String'));
 saveTruncatedImages(hObject,handles,fname);
 
 
@@ -303,7 +382,7 @@ avg_x = round((x1 + x2)/2);
 [z_proj, numNeurons, numPix] = showFish(handles.current_data(avg_y - 120:avg_y + 120,...
     avg_x - 100:avg_x + 100, :));
 
-function rotate_im(lineX, lineY, hObject, handles)
+function rotate_im_fcn(lineX, lineY, hObject, handles)
 deltay = lineY(2) - lineY(1);
 deltax = lineX(2) - lineX(1);
 slope = deltay / deltax;
@@ -311,14 +390,14 @@ theta = abs(atand(slope));
 numIminStack = size(handles.current_data,3);
 
 if deltax > 0 && deltay > 0
-        phi = 270 + theta;
-    elseif deltax > 0 && deltay < 0
-        phi = 270 - theta;
-    elseif deltax < 0 && deltay > 0
-        phi = 90 - theta;
-    else
-        phi = 90 +  theta;
-end    
+    phi = 270 + theta;
+elseif deltax > 0 && deltay < 0
+    phi = 270 - theta;
+elseif deltax < 0 && deltay > 0
+    phi = 90 - theta;
+else
+    phi = 90 +  theta;
+end
 
 % if deltax > 0 && deltay > 0
 %         phi = 90 + theta;
@@ -329,7 +408,7 @@ end
 %     else
 %         phi = -(90 - theta);
 % end
-    
+
 temp = imrotate(handles.current_data(:,:,1),phi);
 temp_rotate = zeros([size(temp),numIminStack]);
 temp_rotate(:,:,1) = temp;

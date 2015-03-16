@@ -16,7 +16,7 @@ im_noiseRemoved = bwareaopen(im_bw,100/scale);
 
 SE = strel('disk',100/scale);
 im_closed = imclose(im_noiseRemoved,SE);
-im_noiseRemoved_2 = bwareaopen(im_closed,20000/scale);
+im_noiseRemoved_2 = bwareaopen(im_closed,2000/scale);
 % figure();imshowpair(im_noiseRemoved, im_noiseRemoved_2,'montage');
 
 %PCA Analysis
@@ -160,24 +160,29 @@ end
 function [cc] = detectEyes(BF_im,scale)
 load('eye_mask.mat');
 eyeFilter = imresize(eyeFilter, 1/scale);
+BF_im = double(BF_im) - mean(mean(BF_im));
 
 res = conv2(BF_im,eyeFilter,'same');
 %Normalize and threshold to find hot spots
-res_norm = res./max(max(res));
-lvl = graythresh(res_norm);
+res_norm = res - min(min(res));
+res_norm = res_norm./max(max(res_norm));
+lvl = prctile(reshape(res_norm,1,numel(res_norm)),99);
 res_bw = im2bw(res_norm,lvl);
-res_noise_removed = bwareaopen(res_bw,750/scale);
+res_bw_closed = imclose(res_bw,strel('disk',100/scale));
+res_noise_removed = bwareaopen(res_bw_closed,100/scale);
 
 %Now to analyze and find the centers of the two largest hits
 cc = bwconncomp(res_noise_removed, 4);
 
 %Plotting
+% figure();imagesc(BF_im);colormap gray;axis image;
+% figure();imagesc(res);axis image;
+% figure();imagesc(res_bw);axis image;
+% figure();imagesc(res_bw_closed);axis image;
+% figure();imagesc(res_noise_removed);colormap gray;axis off;axis image;
 % centroids = regionprops(cc,'centroid');
 % x1 = centroids(1).Centroid(1);x2 = centroids(2).Centroid(1);
 % y1 = centroids(1).Centroid(2);y2 = centroids(2).Centroid(2); 
-% figure();imagesc(BF_im);colormap gray;axis image;
-% figure();imagesc(res);axis image;
-% figure();imagesc(res_noise_removed);colormap gray;axis off;axis image;
 % hold on;plot(x1,y1,'r*');plot(x2,y2,'r*');hold off;
 % figure();imshowpair(BF_im,res_noise_removed);
 % hold on;plot(x1,y1,'b*');plot(x2,y2,'b*');hold off;

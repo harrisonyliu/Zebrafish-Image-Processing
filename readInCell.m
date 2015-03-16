@@ -5,9 +5,9 @@ names_list = cell(1,numel(filenames));
 %Here we sort the list of names properly so we go in the right image order
 for i = 1:numel(filenames)
     temp_name = filenames(i).name;
-    idx = strfind(temp_name,'wix') + 3;
-    if temp_name(idx + 2) == ')';
-        names_list{i} = [temp_name(1:idx) '0' temp_name(idx+1:end)];
+    idx = strfind(temp_name,'z') + 3;
+    if temp_name(idx) == ')';
+        names_list{i} = [temp_name(1:idx - 2) '0' temp_name(idx-1:end)];
     else
         names_list{i} = temp_name;
     end
