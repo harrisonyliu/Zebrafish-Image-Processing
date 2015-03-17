@@ -159,7 +159,9 @@ try
     plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
     z_proj = neuron_z_proj(res.neuron(1),res.neuron(2),final_crop);
     imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
-    save_neuron(z_proj,handles);
+    z_proj_filtered = filter_neuron(z_proj);
+    imagesc(z_proj_filtered,'Parent',handles.axes6);colormap gray; axis image;axis off;
+    save_neuron(z_proj,z_proj_filtered,handles);
 catch err
     msgbox('Something is wrong with this fish! See command line for error. Try manually extracting neurons');
 end
@@ -175,7 +177,22 @@ neuron_crop = im(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
 z_proj = max(neuron_crop,[],3);
 end
 
-function save_neuron(z_proj, handles)
+function filtered_res = filter_neuron(img)
+%This will bandpass filter the image passed to it.
+%First set the filtering parameters
+kernel_size = 18;
+h_small = fspecial('Gaussian'); %0.5pix, 3x3 box
+h_large = fspecial('Gaussian',[kernel_size,kernel_size],3);
+%Now start the filtering process
+smallBlur_Im = imfilter(img,h_small,'same');
+largeBlur_Im = imfilter(img,h_large,'same');
+diff_Im = smallBlur_Im - largeBlur_Im;
+diff_Im(diff_Im < 0) = 0;
+trim = round(kernel_size/2) + 1;
+filtered_res = diff_Im(1+trim:end - trim,11:end - trim);
+end
+
+function save_neuron(z_proj, z_proj_filtered,handles)
     %Saving the z-projected images
     well = strfind(handles.well_name,'(');
     if isempty(well) == 0
@@ -184,7 +201,13 @@ function save_neuron(z_proj, handles)
         newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
     end
     fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, newname);
-    imwrite(z_proj,fname_neuron);
+    fname_neuron_filter = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons filtered', date, newname);
+    try
+        imwrite(z_proj,fname_neuron);
+        imwrite(z_proj_filtered,fname_neuron_filter);
+    catch err
+        msgbox('Cannot access Z:/Badlands!');
+    end
 end
 
 function getImNum(hObject, eventdata, handles, moveAmt)
@@ -252,7 +275,9 @@ try
     plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
     z_proj = neuron_z_proj(res.neuron(1),res.neuron(2),final_crop);
     imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
-    save_neuron(z_proj,handles);
+    z_proj_filtered = filter_neuron(z_proj);
+    imagesc(z_proj_filtered,'Parent',handles.axes6);colormap gray; axis image;axis off;
+    save_neuron(z_proj,z_proj_filtered,handles);
 catch err
     msgbox('Something is wrong with this fish! See command line for error. Try manually extracting neurons');
 end
@@ -278,7 +303,9 @@ if strcmp(eventdata.Key,'5') == 1
     [x,y] = getpts(handles.axes1);
     z_proj = neuron_z_proj(x,y,handles.current_data(:,:,1:end-1));
     imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
-    save_neuron(z_proj,handles);
+    z_proj_filtered = filter_neuron(z_proj);
+    imagesc(z_proj_filtered,'Parent',handles.axes6);colormap gray; axis image;axis off;
+    save_neuron(z_proj,z_proj_filtered,handles);
 end
 end
 
