@@ -200,11 +200,11 @@ function save_neuron(z_proj, z_proj_filtered,handles)
     else
         newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
     end
-    fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, newname);
-    fname_neuron_filter = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons filtered', date, newname);
+    fname_neuron = fullfile(handles.dir_neuron, newname);
+    fname_neuron_filter = fullfile(handles.dir_neuron_filter, newname);
     try
-        imwrite(z_proj,fname_neuron);
-        imwrite(z_proj_filtered,fname_neuron_filter);
+        imwrite(uint16(z_proj),fname_neuron);
+        imwrite(uint16(z_proj_filtered),fname_neuron_filter);
     catch err
         msgbox('Cannot access Z:/Badlands!');
     end

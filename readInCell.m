@@ -27,7 +27,9 @@ for i = 2:numel(filenames)
     im_array(:,:,i) = imread(fullfile(folder,temp_name));
 end
 
-fishImageBrowser(im_array, well_name);
+temp = fileparts(folder);
+dir_name = fileparts(temp);
+fishImageBrowser(im_array, well_name, dir_name);
 % showFish(im_array);
 % for i = 1:numel(filenames)
 %     figure();imagesc(im_array(:,:,i));colormap gray;axis off;axis image;

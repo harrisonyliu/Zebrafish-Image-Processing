@@ -52,6 +52,7 @@ function fishImageBrowser_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to fishImageBrowser (see VARARGIN)
 handles.current_data = varargin{1};
 handles.well_name = varargin{2};
+handles.dir_name = varargin{3};
 
 handles.maxNum = size(handles.current_data,3) - 1;
 imagesc(handles.current_data(:,:,1),'Parent',handles.axes1);colormap gray;axis image;axis off;
@@ -61,8 +62,9 @@ axes(handles.axes2);title(handles.well_name);axes(handles.axes1);
 handles.color_bound = get(handles.axes1,'CLim');
 
 %Directory to save processed images in
-mkdir(fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date));
-mkdir(fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons filtered', date));
+handles.dir_neuron = fullfile(handles.dir_name, [date ' Extracted neurons']);
+handles.dir_neuron_filter = fullfile(handles.dir_name, [date ' Extracted neurons filtered']);
+mkdir(handles.dir_neuron); mkdir(handles.dir_neuron_filter);
 
 % Choose default command line output for fishImageBrowser
 handles.output = hObject;
@@ -428,8 +430,8 @@ function save_neuron(z_proj, z_proj_filtered,handles)
     else
         newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
     end
-    fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, newname);
-    fname_neuron_filter = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons filtered', date, newname);
+    fname_neuron = fullfile(handles.dir_neuron, newname);
+    fname_neuron_filter = fullfile(handles.dir_neuron_filter, newname);
     try
         imwrite(z_proj,fname_neuron);
         imwrite(z_proj_filtered,fname_neuron_filter);
