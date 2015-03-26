@@ -71,7 +71,7 @@ well_per_comp(2) = mean(arr_2) / 2;
 
 close all;
 figure();plot(x_axis, well_per_comp,'b.');title('Optimal compound per well selection');
-xlabel('Number of wells/compound');ylabel('Wells needed to screen 1 compound');
+xlabel('Number of compounds/well');ylabel('Wells needed to screen 1 compound');
 x = x_axis; y = well_per_comp; c = cellstr(num2str(well_per_comp'));
 dx = 0; dy = 0.05; 
 text(x+dx, y+dy, c);
