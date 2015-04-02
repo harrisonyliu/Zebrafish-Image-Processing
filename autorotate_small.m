@@ -158,7 +158,7 @@ res.neuron = 2*[round(neuron_x), round(neuron_y)];res.midpt = 2*[round(midpt_x),
 end
 
 function [cc] = detectEyes(BF_im,scale)
-load('eye_mask.mat');
+load('eye_mask_center.mat');
 eyeFilter = imresize(eyeFilter, 1/scale);
 BF_im = double(BF_im) - mean(mean(BF_im));
 

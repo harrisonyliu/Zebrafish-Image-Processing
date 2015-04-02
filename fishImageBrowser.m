@@ -232,10 +232,6 @@ im = handles.current_data(:,:,1);
 res = autorotate_small(handles.current_data(:,:,1),handles.current_data(:,:,end));
 try
     first_crop = handles.current_data(res.crop1(1):res.crop1(2),res.crop1(3):res.crop1(4),1:end-1);
-    % rotate_im = zeros(size(first_crop));
-    % for i = 1:size(first_crop,3)
-    % rotate_im(:,:,i) = imrotate(first_crop(:,:,i),res.phi,'crop');
-    % end
     rotate_im = imrotate(first_crop,res.phi,'crop');
     
     final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4),:);
@@ -247,7 +243,8 @@ try
     neuron_crop = final_crop(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
     
     %Doing max z-projection
-    z_proj = max(neuron_crop,[],3);
+%     z_proj = max(neuron_crop,[],3);
+    z_proj = mask_and_crop(neuron_crop);
     imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
     
     %Saving the z-projected images

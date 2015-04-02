@@ -276,6 +276,7 @@ try
     z_proj = neuron_z_proj(res.neuron(1),res.neuron(2),final_crop);
     imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
     z_proj_filtered = filter_neuron(z_proj);
+%     z_proj_filtered = mask_and_filter(res.neuron(1),res.neuron(2),final_crop);
     imagesc(z_proj_filtered,'Parent',handles.axes6);colormap gray; axis image;axis off;
     save_neuron(z_proj,z_proj_filtered,handles);
 catch err
@@ -331,6 +332,40 @@ temp.numPix(end+1) = numPix;
 temp.normVar(end+1) = normVar;
 temp.wellName{end+1} = handles.well_name;
 assignin('base','fish_data',temp);
+end
+
+function im_filt_mask = mask_and_filter(x,y,im)
+%This function will mask and bandpass filter each image in the stack passed
+%to it. At the very end it will perform a max-intensity z projection.
+
+%First set the filtering parameters
+kernel_size = 18; trim = round(kernel_size/2) + 1;
+h_small = fspecial('Gaussian',[5,5],0.75); %0.5pix, 3x3 box
+h_large = fspecial('Gaussian',[kernel_size,kernel_size],3);
+
+neuron_x1 = x - 105; neuron_x2 = x + 105;
+neuron_y1 = y - 120; neuron_y2 = y + 120;
+neuron_crop = im(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
+
+%Now start the filtering process
+temp_filter = zeros(size(neuron_crop,1) - trim*2,size(neuron_crop,2) - trim*2,size(im,3));
+for i = 1:size(im,3)
+    smallBlur_Im = imfilter(neuron_crop(:,:,i),h_small,'same');
+    largeBlur_Im = imfilter(neuron_crop(:,:,i),h_large,'same');
+    diff_Im = smallBlur_Im - largeBlur_Im;
+    diff_Im(diff_Im < 0) = 0;
+    temp_filter(:,:,i) = diff_Im(1+trim:end - trim,1+trim:end - trim);
+end
+
+%Finally doing the max z-projection
+im_filt_mask = max(temp_filter,[],3);
+figure();imagesc(im_filt_mask);colormap gray;axis image;title('Slice-by-slice filtering');
+temp = max(neuron_crop,[],3);
+smallBlur_Im = imfilter(temp,h_small,'same');
+largeBlur_Im = imfilter(temp,h_large,'same');
+diff_Im = smallBlur_Im - largeBlur_Im;
+diff_Im(diff_Im < 0) = 0;
+figure();imagesc(diff_Im);colormap gray;axis image;title('Bulk filtering');
 end
 
 function saveTruncatedImages(hObject,handles,fname)
