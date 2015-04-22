@@ -22,7 +22,7 @@ function varargout = poseSelectionWindow(varargin)
 
 % Edit the above text to modify the response to help poseSelectionWindow
 
-% Last Modified by GUIDE v2.5 06-Jan-2015 11:27:35
+% Last Modified by GUIDE v2.5 14-Apr-2015 15:16:08
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -77,7 +77,7 @@ end
 guidata(hObject, handles);
 
 % UIWAIT makes poseSelectionWindow wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+uiwait(handles.figure1);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -89,6 +89,7 @@ function varargout = poseSelectionWindow_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
+delete(handles.figure1);
 
 
 % --- Executes on button press in pushbutton1.
@@ -100,7 +101,9 @@ fname = fullfile(handles.pathname, handles.posename(1).name);
 h = gcf;
 % output_image(hObject, eventdata, handles, 1);
 readInCell(fname,handles.wellname);
-close(h);
+handles.output = {[0] '' ''};
+guidata(hObject, handles);
+uiresume(handles.figure1);
 
 
 % --- Executes on button press in pushbutton2.
@@ -110,10 +113,11 @@ function pushbutton2_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 fname = fullfile(handles.pathname, handles.posename(2).name);
 h = gcf;
-% output_image(hObject, eventdata, handles, 2);
+% output_image(hObject, eventdata, handles, 1);
 readInCell(fname,handles.wellname);
-close(h);
-
+handles.output = {[0] '' ''};
+guidata(hObject, handles);
+uiresume(handles.figure1);
 
 % --- Executes on button press in pushbutton3.
 function pushbutton3_Callback(hObject, eventdata, handles)
@@ -124,7 +128,9 @@ fname = fullfile(handles.pathname, handles.posename(3).name);
 h = gcf;
 % output_image(hObject, eventdata, handles, 3);
 readInCell(fname,handles.wellname);
-close(h);
+handles.output = {[0] '' ''};
+guidata(hObject, handles);
+uiresume(handles.figure1);
 
 
 % --- Executes on button press in pushbutton4.
@@ -136,7 +142,9 @@ fname = fullfile(handles.pathname, handles.posename(4).name);
 h = gcf;
 % output_image(hObject, eventdata, handles, 4);
 readInCell(fname,handles.wellname);
-close(h);
+handles.output = {[0] '' ''};
+guidata(hObject, handles);
+uiresume(handles.figure1);
 
 
 % --- Executes on button press in pushbutton5.
@@ -148,7 +156,9 @@ fname = fullfile(handles.pathname, handles.posename(5).name);
 h = gcf;
 % output_image(hObject, eventdata, handles, 5);
 readInCell(fname,handles.wellname);
-close(h);
+handles.output = {[0] '' ''};
+guidata(hObject, handles);
+uiresume(handles.figure1);
 
 function output_image(hObject, eventdata, handles, button_number)
 try 
@@ -162,3 +172,58 @@ end
 temp.images(:,:,end+1) = handles.im_cell{button_number};
 temp.images_bf(:,:,end+1) = handles.im_cell_bf{button_number};
 assignin('base','fish_stack',temp);
+
+
+% --- Executes on button press in pushbutton7.
+function pushbutton7_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+h = gcf;
+handles.output = {[5], fullfile(handles.pathname, handles.posename(1).name), handles.wellname};
+guidata(hObject, handles);
+uiresume(handles.figure1);
+
+
+% --- Executes on button press in pushbutton8.
+function pushbutton8_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton8 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+h = gcf;
+handles.output = {[5], fullfile(handles.pathname, handles.posename(2).name), handles.wellname};
+guidata(hObject, handles);
+uiresume(handles.figure1);
+
+
+% --- Executes on button press in pushbutton9.
+function pushbutton9_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton9 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+h = gcf;
+handles.output = {[5], fullfile(handles.pathname, handles.posename(3).name), handles.wellname};
+guidata(hObject, handles);
+uiresume(handles.figure1);
+
+
+% --- Executes on button press in pushbutton10.
+function pushbutton10_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton10 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+h = gcf;
+handles.output = {[5], fullfile(handles.pathname, handles.posename(4).name), handles.wellname};
+guidata(hObject, handles);
+uiresume(handles.figure1);
+
+
+% --- Executes on button press in pushbutton11.
+function pushbutton11_Callback(hObject, eventdata, handles)
+h = gcf;
+handles.output = {[5], fullfile(handles.pathname, handles.posename(5).name), handles.wellname};
+guidata(hObject, handles);
+uiresume(handles.figure1);
+% hObject    handle to pushbutton11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

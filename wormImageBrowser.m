@@ -58,18 +58,6 @@ imagesc(handles.current_data(:,:,end),'Parent',handles.axes2);colormap gray;axis
 title(['Fish Z-stack 1 of ' num2str(handles.maxNum)]);
 handles.color_bound = get(handles.axes1,'CLim');
 
-%Directory to save processed images in
-mkdir(fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date));
-
-%Autorotating fish and processing
-res = autorotate(handles.current_data(:,:,1),handles.current_data(:,:,end));
-first_crop = im(res.crop1(1):res.crop1(2),res.crop1(3):res.crop1(4));
-rotate_im = imrotate(first_crop,res.phi,'crop');
-final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4));
-imagesc(final_crop,'Parent',handles.axes4);colormap gray; axis image;
-hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
-plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
-
 set(handles.slider1,'Max',handles.maxNum);
 set(handles.slider1,'Min',1);
 set(handles.slider1,'Value',1);
@@ -136,8 +124,6 @@ if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColo
 end
 end
 
-
-% --- Executes on button press in pushbutton1.
 function pushbutton1_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -161,9 +147,11 @@ try
     imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
     z_proj_filtered = filter_neuron(z_proj);
     imagesc(z_proj_filtered,'Parent',handles.axes6);colormap gray; axis image;axis off;
-    save_neuron(z_proj,z_proj_filtered,handles);
+    save_image(z_proj, handles.well_name, fullfile(handles.dir_name,'Extracted neurons'));
+    save_image(z_proj_filtered, handles.well_name, fullfile(handles.dir_name,'Extracted neurons filtered'));
 catch err
     msgbox('Something is wrong with this fish! See command line for error. Try manually extracting neurons');
+    err
 end
 end
 
@@ -190,24 +178,6 @@ diff_Im = smallBlur_Im - largeBlur_Im;
 diff_Im(diff_Im < 0) = 0;
 trim = round(kernel_size/2) + 1;
 filtered_res = diff_Im(1+trim:end - trim,11:end - trim);
-end
-
-function save_neuron(z_proj, z_proj_filtered,handles)
-    %Saving the z-projected images
-    well = strfind(handles.well_name,'(');
-    if isempty(well) == 0
-        newname = [handles.well_name 'wv Cy3 - Cy3).tif'];
-    else
-        newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
-    end
-    fname_neuron = fullfile(handles.dir_neuron, newname);
-    fname_neuron_filter = fullfile(handles.dir_neuron_filter, newname);
-    try
-        imwrite(uint16(z_proj),fname_neuron);
-        imwrite(uint16(z_proj_filtered),fname_neuron_filter);
-    catch err
-        msgbox('Cannot access Z:/Badlands!');
-    end
 end
 
 function getImNum(hObject, eventdata, handles, moveAmt)
@@ -278,9 +248,11 @@ try
     z_proj_filtered = filter_neuron(z_proj);
 %     z_proj_filtered = mask_and_filter(res.neuron(1),res.neuron(2),final_crop);
     imagesc(z_proj_filtered,'Parent',handles.axes6);colormap gray; axis image;axis off;
-    save_neuron(z_proj,z_proj_filtered,handles);
+    save_image(z_proj, handles.well_name, fullfile(handles.dir_name,'Extracted neurons'));
+    save_image(z_proj_filtered, handles.well_name, fullfile(handles.dir_name,'Extracted neurons filtered'));
 catch err
     msgbox('Something is wrong with this fish! See command line for error. Try manually extracting neurons');
+    err
 end
 end
 
@@ -306,7 +278,8 @@ if strcmp(eventdata.Key,'5') == 1
     imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
     z_proj_filtered = filter_neuron(z_proj);
     imagesc(z_proj_filtered,'Parent',handles.axes6);colormap gray; axis image;axis off;
-    save_neuron(z_proj,z_proj_filtered,handles);
+    save_image(z_proj, handles.well_name, fullfile(handles.dir_name,'Extracted neurons'));
+    save_image(z_proj_filtered, handles.well_name, fullfile(handles.dir_name,'Extracted neurons filtered'));
 end
 end
 

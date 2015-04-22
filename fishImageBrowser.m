@@ -61,11 +61,6 @@ imagesc(handles.current_data(:,:,end),'Parent',handles.axes2);colormap gray;axis
 axes(handles.axes2);title(handles.well_name);axes(handles.axes1);
 handles.color_bound = get(handles.axes1,'CLim');
 
-%Directory to save processed images in
-handles.dir_neuron = fullfile(handles.dir_name, [date ' Extracted neurons']);
-handles.dir_neuron_filter = fullfile(handles.dir_name, [date ' Extracted neurons filtered']);
-mkdir(handles.dir_neuron); mkdir(handles.dir_neuron_filter);
-
 % Choose default command line output for fishImageBrowser
 handles.output = hObject;
 
@@ -158,26 +153,15 @@ try
     imagesc(final_crop(:,:,1),'Parent',handles.axes4);colormap gray; axis image;axis off;axes(handles.axes4);
     hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
     plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
-    neuron_x1 = res.neuron(1) - 95; neuron_x2 = res.neuron(1) + 95;
-    neuron_y1 = res.neuron(2) - 110; neuron_y2 = res.neuron(2) + 110;
-    neuron_crop = final_crop(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
-    
-    %Doing max z-projection
-    z_proj = max(neuron_crop,[],3);
+    z_proj = neuron_z_proj(res.neuron(1),res.neuron(2),final_crop);
     imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
-    
-    %Saving the z-projected images
-    mkdir(fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date));
-    well = strfind(handles.well_name,'(');
-    if isempty(well) == 0
-        newname = [handles.well_name 'wv Cy3 - Cy3).tif'];
-    else
-        newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
-    end
-    fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, newname);
-    imwrite(z_proj,fname_neuron);
+    z_proj_filtered = filter_neuron(z_proj);
+    imagesc(z_proj_filtered,'Parent',handles.axes6);colormap gray; axis image;axis off;
+    save_image(z_proj, handles.well_name, fullfile(handles.dir_name,'Extracted neurons'));
+    save_image(z_proj_filtered, handles.well_name, fullfile(handles.dir_name,'Extracted neurons filtered'));
 catch err
     msgbox('Something is wrong with this fish! See command line for error. Try manually extracting neurons');
+    err
 end
 
 function getImNum(hObject, eventdata, handles, moveAmt)
@@ -227,40 +211,31 @@ if strcmp(eventdata.Key,'downarrow') == 1
 end
 
 if strcmp(eventdata.Key,'1') == 1
-%Autorotating fish and processing
-im = handles.current_data(:,:,1);
+    %Autorotating fish and processing
+    im = handles.current_data(:,:,1);
 res = autorotate_small(handles.current_data(:,:,1),handles.current_data(:,:,end));
 try
     first_crop = handles.current_data(res.crop1(1):res.crop1(2),res.crop1(3):res.crop1(4),1:end-1);
+    % rotate_im = zeros(size(first_crop));
+    % for i = 1:size(first_crop,3)
+    % rotate_im(:,:,i) = imrotate(first_crop(:,:,i),res.phi,'crop');
+    % end
     rotate_im = imrotate(first_crop,res.phi,'crop');
     
     final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4),:);
     imagesc(final_crop(:,:,1),'Parent',handles.axes4);colormap gray; axis image;axis off;axes(handles.axes4);
     hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
     plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
-    neuron_x1 = res.neuron(1) - 95; neuron_x2 = res.neuron(1) + 95;
-    neuron_y1 = res.neuron(2) - 110; neuron_y2 = res.neuron(2) + 110;
-    neuron_crop = final_crop(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
-    
-    %Doing max z-projection
-%     z_proj = max(neuron_crop,[],3);
-    z_proj = mask_and_crop(neuron_crop);
+    z_proj = neuron_z_proj(res.neuron(1),res.neuron(2),final_crop);
     imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
-    
-    %Saving the z-projected images
-    mkdir(fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date));
-    well = strfind(handles.well_name,'(');
-    if isempty(well) == 0
-        newname = [handles.well_name 'wv Cy3 - Cy3).tif'];
-    else
-        newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
-    end
-    fname_neuron = fullfile('Z:\Harrison\Zebrafish Screening Data\Extracted neurons', date, newname);
-    imwrite(z_proj,fname_neuron);
+    z_proj_filtered = filter_neuron(z_proj);
+%     z_proj_filtered = mask_and_filter(res.neuron(1),res.neuron(2),final_crop);
+    imagesc(z_proj_filtered,'Parent',handles.axes6);colormap gray; axis image;axis off;
+    save_image(z_proj, handles.well_name, fullfile(handles.dir_name,'Extracted neurons'));
+    save_image(z_proj_filtered, handles.well_name, fullfile(handles.dir_name,'Extracted neurons filtered'));
 catch err
     msgbox('Something is wrong with this fish! See command line for error. Try manually extracting neurons');
 end
-    guidata(hObject,handles); %REMEMBER TO UPDATE THE HANDLES STRUCTURE!!!
 end
 
 if strcmp(eventdata.Key,'2') == 1
@@ -405,7 +380,8 @@ end
             imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
             z_proj_filtered = filter_neuron(z_proj);
             imagesc(z_proj_filtered,'Parent',handles.axes6);colormap gray; axis image;axis off;
-            save_neuron(z_proj,z_proj_filtered,handles);
+            save_image(z_proj, handles.well_name, fullfile(handles.dir_name,'Extracted neurons'));
+            save_image(z_proj_filtered, handles.well_name, fullfile(handles.dir_name,'Extracted neurons filtered'));
             
         function centered_zproject(x,y,hObject,handles);
             showFish(handles.current_data(y - 85:y + 85, x - 85:x + 85, :));
@@ -418,23 +394,6 @@ neuron_y1 = y - 110; neuron_y2 = y + 110;
 neuron_crop = im(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
 %Doing max z-projection
 z_proj = max(neuron_crop,[],3);
-
-function save_neuron(z_proj, z_proj_filtered,handles)
-    %Saving the z-projected images
-    well = strfind(handles.well_name,'(');
-    if isempty(well) == 0
-        newname = [handles.well_name 'wv Cy3 - Cy3).tif'];
-    else
-        newname = [handles.well_name '(wv Cy3 - Cy3).tif'];
-    end
-    fname_neuron = fullfile(handles.dir_neuron, newname);
-    fname_neuron_filter = fullfile(handles.dir_neuron_filter, newname);
-    try
-        imwrite(z_proj,fname_neuron);
-        imwrite(z_proj_filtered,fname_neuron_filter);
-    catch err
-        msgbox('Cannot access Z:/Badlands!');
-    end
 
     
     function filtered_res = filter_neuron(img)

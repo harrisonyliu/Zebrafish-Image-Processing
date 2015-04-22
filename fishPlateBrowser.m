@@ -22,7 +22,7 @@ function varargout = fishPlateBrowser(varargin)
 
 % Edit the above text to modify the response to help fishPlateBrowser
 
-% Last Modified by GUIDE v2.5 05-Jan-2015 16:15:36
+% Last Modified by GUIDE v2.5 21-Apr-2015 17:15:25
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -54,7 +54,10 @@ function fishPlateBrowser_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for fishPlateBrowser
 handles.output = hObject;
-
+handles.pose_Array = struct();
+handles.pose_Array.pose = cell(8,12);
+handles.pose_Array.wellname = cell(8,12);
+handles.pose_Array.success = nan(8,12);
 % Update handles structure
 guidata(hObject, handles);
 
@@ -115,9 +118,13 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{1,1} = temp{2};
+    handles.pose_Array.wellname{1,1} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
+    err
 end
 
 
@@ -132,9 +139,13 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names, wellName);
+    handles.pose_Array.pose{1,2} = temp{2};
+    handles.pose_Array.wellname{1,2} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
+    err
 end
 
 
@@ -149,7 +160,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{1,3} = temp{2};
+    handles.pose_Array.wellname{1,3} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -166,7 +180,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{1,4} = temp{2};
+    handles.pose_Array.wellname{1,4} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -183,7 +200,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{1,5} = temp{2};
+    handles.pose_Array.wellname{1,5} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -200,7 +220,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{1,6} = temp{2};
+    handles.pose_Array.wellname{1,6} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -217,7 +240,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{1,7} = temp{2};
+    handles.pose_Array.wellname{1,7} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -233,7 +259,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{1,8} = temp{2};
+    handles.pose_Array.wellname{1,8} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -249,7 +278,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{1,9} = temp{2};
+    handles.pose_Array.wellname{1,9} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -265,7 +297,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{1,10} = temp{2};
+    handles.pose_Array.wellname{1,10} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -281,7 +316,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{1,11} = temp{2};
+    handles.pose_Array.wellname{1,11} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -298,7 +336,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{1,12} = temp{2};
+    handles.pose_Array.wellname{1,12} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -315,7 +356,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{2,1} = temp{2};
+    handles.pose_Array.wellname{2,1} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -332,7 +376,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{2,2} = temp{2};
+    handles.pose_Array.wellname{2,2} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -349,7 +396,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{2,3} = temp{2};
+    handles.pose_Array.wellname{2,3} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -366,7 +416,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{2,4} = temp{2};
+    handles.pose_Array.wellname{2,4} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -383,7 +436,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{2,5} = temp{2};
+    handles.pose_Array.wellname{2,5} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -400,7 +456,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{2,6} = temp{2};
+    handles.pose_Array.wellname{2,6} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -416,7 +475,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{2,7} = temp{2};
+    handles.pose_Array.wellname{2,7} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -433,7 +495,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{2,8} = temp{2};
+    handles.pose_Array.wellname{2,8} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -450,7 +515,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{2,9} = temp{2};
+    handles.pose_Array.wellname{2,9} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -467,7 +535,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{2,10} = temp{2};
+    handles.pose_Array.wellname{2,10} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -484,7 +555,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{2,11} = temp{2};
+    handles.pose_Array.wellname{2,11} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -501,7 +575,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{2,12} = temp{2};
+    handles.pose_Array.wellname{2,12} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -518,7 +595,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{3,1} = temp{2};
+    handles.pose_Array.wellname{3,1} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -535,7 +615,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{3,2} = temp{2};
+    handles.pose_Array.wellname{3,2} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -552,7 +635,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{3,3} = temp{2};
+    handles.pose_Array.wellname{3,3} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -569,7 +655,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{3,4} = temp{2};
+    handles.pose_Array.wellname{3,4} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -586,7 +675,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{3,5} = temp{2};
+    handles.pose_Array.wellname{3,5} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -603,7 +695,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{3,6} = temp{2};
+    handles.pose_Array.wellname{3,6} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -620,7 +715,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{3,7} = temp{2};
+    handles.pose_Array.wellname{3,7} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -637,7 +735,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{3,8} = temp{2};
+    handles.pose_Array.wellname{3,8} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -654,7 +755,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{3,9} = temp{2};
+    handles.pose_Array.wellname{3,9} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -671,7 +775,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{3,10} = temp{2};
+    handles.pose_Array.wellname{3,10} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -688,7 +795,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{3,11} = temp{2};
+    handles.pose_Array.wellname{3,11} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -705,7 +815,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{3,12} = temp{2};
+    handles.pose_Array.wellname{3,12} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -722,7 +835,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{4,1} = temp{2};
+    handles.pose_Array.wellname{4,1} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -739,7 +855,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{4,2} = temp{2};
+    handles.pose_Array.wellname{4,2} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -756,7 +875,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{4,3} = temp{2};
+    handles.pose_Array.wellname{4,3} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -773,7 +895,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{4,4} = temp{2};
+    handles.pose_Array.wellname{4,4} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -790,7 +915,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{4,5} = temp{2};
+    handles.pose_Array.wellname{4,5} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -807,7 +935,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{4,6} = temp{2};
+    handles.pose_Array.wellname{4,6} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -824,7 +955,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{4,7} = temp{2};
+    handles.pose_Array.wellname{4,7} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -841,7 +975,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{4,8} = temp{2};
+    handles.pose_Array.wellname{4,8} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -858,7 +995,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{4,9} = temp{2};
+    handles.pose_Array.wellname{4,9} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -875,7 +1015,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{4,10} = temp{2};
+    handles.pose_Array.wellname{4,10} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -892,7 +1035,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{4,11} = temp{2};
+    handles.pose_Array.wellname{4,11} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -909,7 +1055,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{4,12} = temp{2};
+    handles.pose_Array.wellname{4,12} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -925,7 +1074,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{5,1} = temp{2};
+    handles.pose_Array.wellname{5,1} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -942,7 +1094,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{5,2} = temp{2};
+    handles.pose_Array.wellname{5,2} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -958,7 +1113,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{5,3} = temp{2};
+    handles.pose_Array.wellname{5,3} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -975,7 +1133,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{5,4} = temp{2};
+    handles.pose_Array.wellname{5,4} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -992,7 +1153,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{5,5} = temp{2};
+    handles.pose_Array.wellname{5,5} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1009,7 +1173,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{5,6} = temp{2};
+    handles.pose_Array.wellname{5,6} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1026,7 +1193,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{5,7} = temp{2};
+    handles.pose_Array.wellname{5,7} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1043,7 +1213,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{5,8} = temp{2};
+    handles.pose_Array.wellname{5,8} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1059,7 +1232,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{5,9} = temp{2};
+    handles.pose_Array.wellname{5,9} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1076,7 +1252,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{5,10} = temp{2};
+    handles.pose_Array.wellname{5,10} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1093,7 +1272,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{5,11} = temp{2};
+    handles.pose_Array.wellname{5,11} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1110,7 +1292,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{5,12} = temp{2};
+    handles.pose_Array.wellname{5,12} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1127,7 +1312,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{6,1} = temp{2};
+    handles.pose_Array.wellname{6,1} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1144,7 +1332,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{6,2} = temp{2};
+    handles.pose_Array.wellname{6,2} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1161,7 +1352,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{6,3} = temp{2};
+    handles.pose_Array.wellname{6,3} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1178,7 +1372,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{6,4} = temp{2};
+    handles.pose_Array.wellname{6,4} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1195,7 +1392,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{6,5} = temp{2};
+    handles.pose_Array.wellname{6,5} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1212,7 +1412,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{6,6} = temp{2};
+    handles.pose_Array.wellname{6,6} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1229,7 +1432,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{6,7} = temp{2};
+    handles.pose_Array.wellname{6,7} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1246,7 +1452,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{6,8} = temp{2};
+    handles.pose_Array.wellname{6,8} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1263,7 +1472,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{6,9} = temp{2};
+    handles.pose_Array.wellname{6,9} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1280,7 +1492,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{6,10} = temp{2};
+    handles.pose_Array.wellname{6,10} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1297,7 +1512,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{6,11} = temp{2};
+    handles.pose_Array.wellname{6,11} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1314,7 +1532,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{6,12} = temp{2};
+    handles.pose_Array.wellname{6,12} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1331,7 +1552,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{7,1} = temp{2};
+    handles.pose_Array.wellname{7,1} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1348,7 +1572,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{7,2} = temp{2};
+    handles.pose_Array.wellname{7,2} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1365,7 +1592,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{7,3} = temp{2};
+    handles.pose_Array.wellname{7,3} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1382,7 +1612,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{7,4} = temp{2};
+    handles.pose_Array.wellname{7,4} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1399,7 +1632,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{7,5} = temp{2};
+    handles.pose_Array.wellname{7,5} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1416,7 +1652,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{7,6} = temp{2};
+    handles.pose_Array.wellname{7,6} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1433,7 +1672,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{7,7} = temp{2};
+    handles.pose_Array.wellname{7,7} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1450,7 +1692,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{7,8} = temp{2};
+    handles.pose_Array.wellname{7,8} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1466,7 +1711,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{7,9} = temp{2};
+    handles.pose_Array.wellname{7,9} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1483,7 +1731,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{7,10} = temp{2};
+    handles.pose_Array.wellname{7,10} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1500,7 +1751,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{7,11} = temp{2};
+    handles.pose_Array.wellname{7,11} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1517,7 +1771,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{7,12} = temp{2};
+    handles.pose_Array.wellname{7,12} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1534,7 +1791,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{8,1} = temp{2};
+    handles.pose_Array.wellname{8,1} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1551,7 +1811,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{8,2} = temp{2};
+    handles.pose_Array.wellname{8,2} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1568,7 +1831,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{8,3} = temp{2};
+    handles.pose_Array.wellname{8,3} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1585,7 +1851,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{8,4} = temp{2};
+    handles.pose_Array.wellname{8,4} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1602,7 +1871,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{8,5} = temp{2};
+    handles.pose_Array.wellname{8,5} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1619,7 +1891,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{8,6} = temp{2};
+    handles.pose_Array.wellname{8,6} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1636,7 +1911,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{8,7} = temp{2};
+    handles.pose_Array.wellname{8,7} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1653,7 +1931,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{8,8} = temp{2};
+    handles.pose_Array.wellname{8,8} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1670,7 +1951,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{8,9} = temp{2};
+    handles.pose_Array.wellname{8,9} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1687,7 +1971,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{8,10} = temp{2};
+    handles.pose_Array.wellname{8,10} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1704,7 +1991,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{8,11} = temp{2};
+    handles.pose_Array.wellname{8,11} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1721,7 +2011,10 @@ pose_names = handles.folder_names(3:end);
 wellName = get(hObject,'String');
 set(hObject,'ForegroundColor','green');
 try
-    poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    temp = poseSelectionWindow(path_minus_pose, pose_names,wellName);
+    handles.pose_Array.pose{8,12} = temp{2};
+    handles.pose_Array.wellname{8,12} = temp{3};
+    guidata(hObject, handles);
 catch err
     msgbox('Error! No such fish exists in the dataset!');
 end
@@ -1750,4 +2043,102 @@ if path_name ~= 0
     handles.path_name = path_name;
     guidata(hObject, handles);
     edit1_Callback(hObject, eventdata, handles)
+end
+
+
+% --- Executes on button press in pushbutton99.
+function pushbutton99_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton99 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+for i = 1:8
+    for j = 1:12
+        temp_folder = handles.pose_Array.pose{i,j};
+        temp_wellname = handles.pose_Array.wellname{i,j};
+        
+        if isempty(temp_folder) == 0
+            success = load_and_extract(temp_folder,temp_wellname);
+            handles.pose_Array.success(i,j) = success;
+            assignin('base', 'batch_results', handles.pose_Array);
+        end
+    end
+end
+guidata(hObject, handles);
+path_minus_pose = get(handles.edit1,'String');
+mat_save_dir = fileparts(path_minus_pose);
+[temp, plate_name] = fileparts(mat_save_dir);
+[temp, assay_date] = fileparts(temp);
+fname = fullfile(mat_save_dir,[assay_date '_' plate_name '_batchresults.mat']);
+handles.pose_Array.err_matrix = brainCheck(fullfile(mat_save_dir,'Brain ID'));
+batch_results = handles.pose_Array;
+%Batch results: 0 means unable to auto-ID brain, 1 means successful
+%auto-ID, NaN means no appropriate pose was identified or the fish was
+%missing.
+assignin('base', 'batch_results', handles.pose_Array);
+save(fname, 'batch_results');
+redo_matrix = batch_results.err_matrix + batch_results.success;
+
+for i = 1:8
+    for j = 1:12
+        if redo_matrix(i,j) <= 0
+            button_num = (i - 1)*12 + j;
+            button_name = ['handles.pushbutton' num2str(button_num)];
+            set(eval(button_name),'ForegroundColor','red');
+        end
+    end
+end
+
+function success = load_and_extract(folder,well_name)
+p = folder;
+filenames = dir(fullfile(folder,['*' well_name '*']));
+names_list = cell(1,numel(filenames));
+%Here we sort the list of names properly so we go in the right image order
+for i = 1:numel(filenames)
+    temp_name = filenames(i).name;
+    idx = strfind(temp_name,'z') + 3;
+    if temp_name(idx) == ')';
+        names_list{i} = [temp_name(1:idx - 2) '0' temp_name(idx-1:end)];
+    else
+        names_list{i} = temp_name;
+    end
+end
+[names_list,order] = sort(names_list');
+
+%Now create the image array and start filling it in
+temp_name = filenames(1).name;
+temp_im = imread(fullfile(folder,temp_name));
+w = size(temp_im,1);
+h = size(temp_im,2);
+im_array = zeros(w,h,numel(filenames));
+im_array(:,:,order(1)) = temp_im;
+
+for i = 2:numel(filenames)
+    temp_name = filenames(order(i)).name;
+    im_array(:,:,i) = imread(fullfile(folder,temp_name));
+end
+
+FL = im_array(:,:,1:end-1); BF = im_array(:,:,end);
+success = autoextract_brain(FL, BF, 2, folder, well_name);
+
+
+% --- Executes on button press in pushbutton100.
+function pushbutton100_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton100 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+ [filename, pathname, filterindex] = uigetfile('*.mat');
+if filename ~= 0
+    load(fullfile(pathname,filename));
+    redo_matrix = batch_results.success + batch_results.err_matrix;
+    for i = 1:8
+        for j = 1:12
+            button_num = (i - 1)*12 + j;
+            button_name = ['handles.pushbutton' num2str(button_num)];
+            if redo_matrix(i,j) <= 0
+                set(eval(button_name),'ForegroundColor','red');
+            elseif redo_matrix(i,j) == 1;
+                set(eval(button_name),'ForegroundColor','green');
+            end
+        end
+    end
 end

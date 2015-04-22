@@ -5,7 +5,7 @@
 %these images in a new folder.
 
 %Reading in the images
-im_folder = 'F:\2015213\Plate 2\17-Mar-2015 Plate2';
+im_folder = 'Z:\Harrison\Zebrafish Screening Data\2015213\Plate 2 Raw\17-Mar-2015 Plate2';
 im_dir = dir(im_folder);
 for i = 3:numel(im_dir)-1
     im_stack(:,:,i-2) = imread(fullfile(im_folder,im_dir(i).name));
