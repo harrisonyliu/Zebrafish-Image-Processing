@@ -118,7 +118,7 @@ else
 end
 
 function next_image(hObject, eventdata, handles)
-if handles.curr_im <= numel(handles.file_dir)-2
+if handles.curr_im <= numel(handles.file_dir)-1
     handles.curr_im = handles.curr_im + 1;
     handles.curr_fname = fullfile(handles.pathname, handles.file_dir(handles.curr_im).name);
     temp_im = imread(handles.curr_fname);
