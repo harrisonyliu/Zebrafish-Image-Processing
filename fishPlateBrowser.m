@@ -2077,16 +2077,7 @@ batch_results = handles.pose_Array;
 assignin('base', 'batch_results', handles.pose_Array);
 save(fname, 'batch_results');
 redo_matrix = batch_results.err_matrix + batch_results.success;
-
-for i = 1:8
-    for j = 1:12
-        if redo_matrix(i,j) <= 0
-            button_num = (i - 1)*12 + j;
-            button_name = ['handles.pushbutton' num2str(button_num)];
-            set(eval(button_name),'ForegroundColor','red');
-        end
-    end
-end
+label_wells(handles, redo_matrix);
 
 function success = load_and_extract(folder,well_name)
 p = folder;
@@ -2130,15 +2121,23 @@ function pushbutton100_Callback(hObject, eventdata, handles)
 if filename ~= 0
     load(fullfile(pathname,filename));
     redo_matrix = batch_results.success + batch_results.err_matrix;
-    for i = 1:8
-        for j = 1:12
-            button_num = (i - 1)*12 + j;
-            button_name = ['handles.pushbutton' num2str(button_num)];
-            if redo_matrix(i,j) <= 0
-                set(eval(button_name),'ForegroundColor','red');
-            elseif redo_matrix(i,j) == 1;
-                set(eval(button_name),'ForegroundColor','green');
-            end
+    label_wells(handles, redo_matrix);
+end
+
+function label_wells(handles, redo_matrix)
+%This function will color code the wells in fishPlateBrowser, green means
+%successful ID, red means unsuccessful, black means the well was either
+%empty or no good poses were identified
+for i = 1:8
+    for j = 1:12
+        button_num = (i - 1)*12 + j;
+        button_name = ['handles.pushbutton' num2str(button_num)];
+        if redo_matrix(i,j) <= 0
+            set(eval(button_name),'ForegroundColor','red');
+        elseif redo_matrix(i,j) == 1;
+            set(eval(button_name),'ForegroundColor','green');
+        else
+            set(eval(button_name),'ForegroundColor','black');
         end
     end
 end
