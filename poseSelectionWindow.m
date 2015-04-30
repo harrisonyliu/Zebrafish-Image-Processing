@@ -22,7 +22,7 @@ function varargout = poseSelectionWindow(varargin)
 
 % Edit the above text to modify the response to help poseSelectionWindow
 
-% Last Modified by GUIDE v2.5 14-Apr-2015 15:16:08
+% Last Modified by GUIDE v2.5 28-Apr-2015 13:29:05
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -53,12 +53,12 @@ function poseSelectionWindow_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to poseSelectionWindow (see VARARGIN)
 
 % Choose default command line output for poseSelectionWindow
-handles.output = hObject;
 handles.pathname = varargin{1};
 handles.posename = varargin{2};
 handles.wellname = varargin{3};
 handles.im_cell = cell(0);
 handles.im_cell_bf = cell(0);
+handles.output = [];
 
 for i = 1:numel(handles.posename)
     fname = fullfile(handles.pathname, handles.posename(i).name);
@@ -101,7 +101,7 @@ fname = fullfile(handles.pathname, handles.posename(1).name);
 h = gcf;
 % output_image(hObject, eventdata, handles, 1);
 readInCell(fname,handles.wellname);
-handles.output = {[0] '' ''};
+handles.output = {[1], fullfile(handles.pathname, handles.posename(1).name), handles.wellname, 'good'};
 guidata(hObject, handles);
 uiresume(handles.figure1);
 
@@ -115,7 +115,7 @@ fname = fullfile(handles.pathname, handles.posename(2).name);
 h = gcf;
 % output_image(hObject, eventdata, handles, 1);
 readInCell(fname,handles.wellname);
-handles.output = {[0] '' ''};
+handles.output = {[2], fullfile(handles.pathname, handles.posename(2).name), handles.wellname, 'good'};
 guidata(hObject, handles);
 uiresume(handles.figure1);
 
@@ -128,7 +128,7 @@ fname = fullfile(handles.pathname, handles.posename(3).name);
 h = gcf;
 % output_image(hObject, eventdata, handles, 3);
 readInCell(fname,handles.wellname);
-handles.output = {[0] '' ''};
+handles.output = {[3], fullfile(handles.pathname, handles.posename(3).name), handles.wellname, 'good'};
 guidata(hObject, handles);
 uiresume(handles.figure1);
 
@@ -142,7 +142,7 @@ fname = fullfile(handles.pathname, handles.posename(4).name);
 h = gcf;
 % output_image(hObject, eventdata, handles, 4);
 readInCell(fname,handles.wellname);
-handles.output = {[0] '' ''};
+handles.output = {[4], fullfile(handles.pathname, handles.posename(4).name), handles.wellname, 'good'};
 guidata(hObject, handles);
 uiresume(handles.figure1);
 
@@ -156,7 +156,7 @@ fname = fullfile(handles.pathname, handles.posename(5).name);
 h = gcf;
 % output_image(hObject, eventdata, handles, 5);
 readInCell(fname,handles.wellname);
-handles.output = {[0] '' ''};
+handles.output = {[5], fullfile(handles.pathname, handles.posename(5).name), handles.wellname, 'good'};
 guidata(hObject, handles);
 uiresume(handles.figure1);
 
@@ -180,7 +180,7 @@ function pushbutton7_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 h = gcf;
-handles.output = {[5], fullfile(handles.pathname, handles.posename(1).name), handles.wellname};
+handles.output = {[1], fullfile(handles.pathname, handles.posename(1).name), handles.wellname, 'good'};
 guidata(hObject, handles);
 uiresume(handles.figure1);
 
@@ -191,7 +191,7 @@ function pushbutton8_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 h = gcf;
-handles.output = {[5], fullfile(handles.pathname, handles.posename(2).name), handles.wellname};
+handles.output = {[2], fullfile(handles.pathname, handles.posename(2).name), handles.wellname, 'good'};
 guidata(hObject, handles);
 uiresume(handles.figure1);
 
@@ -202,7 +202,7 @@ function pushbutton9_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 h = gcf;
-handles.output = {[5], fullfile(handles.pathname, handles.posename(3).name), handles.wellname};
+handles.output = {[3], fullfile(handles.pathname, handles.posename(3).name), handles.wellname, 'good'};
 guidata(hObject, handles);
 uiresume(handles.figure1);
 
@@ -213,7 +213,7 @@ function pushbutton10_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 h = gcf;
-handles.output = {[5], fullfile(handles.pathname, handles.posename(4).name), handles.wellname};
+handles.output = {[4], fullfile(handles.pathname, handles.posename(4).name), handles.wellname, 'good'};
 guidata(hObject, handles);
 uiresume(handles.figure1);
 
@@ -221,9 +221,46 @@ uiresume(handles.figure1);
 % --- Executes on button press in pushbutton11.
 function pushbutton11_Callback(hObject, eventdata, handles)
 h = gcf;
-handles.output = {[5], fullfile(handles.pathname, handles.posename(5).name), handles.wellname};
+handles.output = {[5], fullfile(handles.pathname, handles.posename(5).name), handles.wellname, 'good'};
 guidata(hObject, handles);
 uiresume(handles.figure1);
 % hObject    handle to pushbutton11 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+% --- Executes when user attempts to close figure1.
+function varargout = figure1_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: delete(hObject) closes the figure
+if isempty(handles.output) == 1
+    handles.output = {[0] 'empty' handles.wellname, 'missing'};
+    guidata(hObject,handles);
+end
+uiresume(handles.figure1);
+
+
+% --- Executes on button press in pushbutton12.
+function pushbutton12_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton12 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if isempty(handles.output) == 1
+    handles.output = {[0] 'empty' handles.wellname, 'missing'};
+    guidata(hObject,handles);
+end
+uiresume(handles.figure1);
+
+
+% --- Executes on button press in pushbutton13.
+function pushbutton13_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton13 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if isempty(handles.output) == 1
+    handles.output = {[0] 'empty' handles.wellname, 'bad'};
+    guidata(hObject,handles);
+end
+uiresume(handles.figure1);
