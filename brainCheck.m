@@ -121,12 +121,17 @@ function next_image(hObject, eventdata, handles)
 if handles.curr_im <= numel(handles.file_dir)-1
     handles.curr_im = handles.curr_im + 1;
     handles.curr_fname = fullfile(handles.pathname, handles.file_dir(handles.curr_im).name);
-    if strfind(handles.curr_fname, 'Thumbs.db') == 0
+    if isempty(strfind(handles.curr_fname, 'Thumbs.db')) == 1
         temp_im = imread(handles.curr_fname);
         imagesc(temp_im,'Parent',handles.axes1);colormap gray;axis image;axis off;
         [wellname, ~, ~] = extract_wellname(handles.curr_fname);
         title(wellname);
         guidata(hObject, handles);
+    else
+        msgbox('You have finished the data set!');
+        handles.output = handles.err_matrix;
+        guidata(hObject,handles);
+        uiresume(handles.figure1);
     end
 else
     msgbox('You have finished the data set!');
