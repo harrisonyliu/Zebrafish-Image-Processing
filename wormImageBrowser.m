@@ -138,7 +138,6 @@ try
     % rotate_im(:,:,i) = imrotate(first_crop(:,:,i),res.phi,'crop');
     % end
     rotate_im = imrotate(first_crop,res.phi,'crop');
-    
     final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4),:);
     imagesc(final_crop(:,:,1),'Parent',handles.axes4);colormap gray; axis image;axis off;axes(handles.axes4);
     hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
@@ -158,11 +157,15 @@ end
 function z_proj = neuron_z_proj(x,y,im)
 %This function will take the image passed to it, and crop out a 191 x 221
 %z-project image around the central point
-neuron_x1 = x - 95; neuron_x2 = x + 95;
-neuron_y1 = y - 110; neuron_y2 = y + 110;
-neuron_crop = im(neuron_y1:neuron_y2, neuron_x1:neuron_x2,:);
+neuron_crop = crop_brain_area(x,y,im);
 %Doing max z-projection
 z_proj = max(neuron_crop,[],3);
+end
+
+function crop = crop_brain_area(x,y,im)
+x1 = x - 95; x2 = x + 95;
+y1 = y - 110; y2 = y + 110;
+crop = im(y1:y2, x1:x2, :);
 end
 
 function filtered_res = filter_neuron(img)
@@ -275,6 +278,12 @@ end
 if strcmp(eventdata.Key,'5') == 1
     [x,y] = getpts(handles.axes1);
     z_proj = neuron_z_proj(x,y,handles.current_data(:,:,1:end-1));
+    BF_im = crop_brain_area(x,y,handles.current_data(:,:,end));
+    mkdir(fullfile(handles.dir_name,'BF'));
+    [temp, parent] = fileparts(fullfile(handles.dir_name,'BF'));
+    [temp, plate_name] = fileparts(temp);
+    [temp, assay_date] = fileparts(temp);
+    imwrite(uint16(BF_im),fullfile(handles.dir_name,'BF',[assay_date '_' plate_name '_' handles.well_name '.tif']));
     imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
     z_proj_filtered = filter_neuron(z_proj);
     imagesc(z_proj_filtered,'Parent',handles.axes6);colormap gray; axis image;axis off;
