@@ -283,7 +283,7 @@ if strcmp(eventdata.Key,'5') == 1
     [temp, parent] = fileparts(fullfile(handles.dir_name,'BF'));
     [temp, plate_name] = fileparts(temp);
     [temp, assay_date] = fileparts(temp);
-    imwrite(uint16(BF_im),fullfile(handles.dir_name,'BF',[assay_date '_' plate_name '_' handles.well_name '.tif']));
+    imwrite(uint16(BF_im(11:end-10,11:end-10),fullfile(handles.dir_name,'BF',[assay_date '_' plate_name '_' handles.well_name '.tif']));
     imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
     z_proj_filtered = filter_neuron(z_proj);
     imagesc(z_proj_filtered,'Parent',handles.axes6);colormap gray; axis image;axis off;
