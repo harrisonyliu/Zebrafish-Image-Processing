@@ -49,7 +49,7 @@ try
         print(fig,fullfile(dir_brain_ID,[assay_date '_' plate_name '_' well_name]),'-dpng')
         close(fig);
         mkdir(dir_BF);
-        imwrite(uint16(brain_BF(11:end-10,11:end-10),fullfile(dir_BF,[assay_date '_' plate_name '_' well_name '.tif']));
+        imwrite(uint16(brain_BF(11:end-10,11:end-10)),fullfile(dir_BF,[assay_date '_' plate_name '_' well_name '.tif']));
     end
     success = 1;
 catch err
