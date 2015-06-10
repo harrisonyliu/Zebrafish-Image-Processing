@@ -22,7 +22,7 @@ function varargout = dataBrowser(varargin)
 
 % Edit the above text to modify the response to help dataBrowser
 
-% Last Modified by GUIDE v2.5 15-May-2015 11:29:23
+% Last Modified by GUIDE v2.5 09-Jun-2015 16:06:20
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,14 +57,33 @@ handles.output = hObject;
 handles.selectidx = 2;
 handles.colorIdx = 1;
 handles.numPlots = 2;
-hold on;plot([0, 45], [0.15 0.15],'m--');plot([15 15],[0 2],'m--');
+hold on;plot([0, 45], [0.13 0.13],'m--');plot([10 10],[0 2],'m--');
 axis([0,20,0,0.2]);
+handles.cell_profiler_dir = 'Z:\Harrison\Zebrafish Screening Data\CellProfiler_Results';
+handles.folder_names = dir(handles.cell_profiler_dir);
+
+for i = 1:length(handles.folder_names)
+    if strcmp(handles.folder_names(i).name,'.') == 1
+        remove1 = i;
+    elseif strcmp(handles.folder_names(i).name,'..') == 1
+        remove2 = i;
+    elseif strcmp(handles.folder_names(i).name,'Images') == 1
+        remove3 = i;
+    end
+end
+
+handles.folder_names([remove1 remove2 remove3]) = [];
+handles.folder_string = {'Select data' handles.folder_names.name};
+set(handles.popupmenu1, 'String', handles.folder_string);
+set(handles.popupmenu2, 'String', handles.folder_string);
+set(handles.popupmenu3, 'String', handles.folder_string);
+set(handles.edit2,'String',fullfile(handles.cell_profiler_dir,'Images'));
 
 %%%% BEGIN TEST CODE %%%%
-% fname1 = 'C:\Users\harri_000\Google Drive\Lab Stuff\Zebrafish Project\CellProfiler Results\2015.05.14 Clear Hit Re-doImage.csv';
-% fname2 = 'C:\Users\harri_000\Google Drive\Lab Stuff\Zebrafish Project\CellProfiler Results\2015.05.14 Putative Hit Re-doImage.csv';
-% fname3 = 'C:\Users\harri_000\Google Drive\Lab Stuff\Zebrafish Project\CellProfiler Results\2015.05.15 Non-hit Re-doImage.csv';
-% handles.image_folder = 'C:\Users\harri_000\Downloads\Training Data\images';
+% fname1 = 'C:\Users\harri_000\Google Drive\Lab Stuff\Zebrafish Project\CellProfiler Results\2015.06.08 Clear hit with BFImage.csv';
+% fname2 = 'C:\Users\harri_000\Google Drive\Lab Stuff\Zebrafish Project\CellProfiler Results\2015.06.08 Putative hit with BFImage.csv';
+% fname3 = 'C:\Users\harri_000\Google Drive\Lab Stuff\Zebrafish Project\CellProfiler Results\2015.06.08 Non hit with BFImage.csv';
+% handles.image_folder = 'C:\Users\harri_000\Downloads\Training Re-do\Consolidated_images';
 % set(handles.edit2,'String',handles.image_folder);
 % 
 % set(handles.edit1,'String',fname1);
@@ -318,3 +337,115 @@ set(handles.edit4,'String',fname);
 handles.colorIdx = handles.colorIdx + 1;
 handles.numPlots = handles.numPlots + 1;
 guidata(hObject,handles);
+
+
+% --- Executes on selection change in popupmenu1.
+function popupmenu1_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu1 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu1
+menu_num = get(handles.popupmenu1,'Value');
+
+if menu_num ~= 1
+    folder_selection = handles.folder_string{menu_num};
+    filename = get_csv_fname(handles.cell_profiler_dir,folder_selection);
+    [handles.num1,handles.txt1,handles.raw1]=xlsread(filename);
+    [handles.fnames1, handles.neuroncount1, handles.conv1] = process_xls(handles.num1,handles.txt1,handles.raw1, handles, hObject);
+    handles.colorIdx = handles.colorIdx + 1;
+    handles.numPlots = handles.numPlots + 1;
+    guidata(hObject,handles);
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in popupmenu2.
+function popupmenu2_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu2 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu2
+menu_num = get(handles.popupmenu2,'Value');
+
+if menu_num ~= 1
+    folder_selection = handles.folder_string{menu_num};
+    filename = get_csv_fname(handles.cell_profiler_dir,folder_selection);
+    [handles.num2,handles.txt2,handles.raw2]=xlsread(filename);
+    [handles.fnames2, handles.neuroncount2, handles.conv2] = process_xls(handles.num2,handles.txt2,handles.raw2, handles, hObject);
+    handles.colorIdx = handles.colorIdx + 1;
+    handles.numPlots = handles.numPlots + 1;
+    guidata(hObject,handles);
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in popupmenu3.
+function popupmenu3_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu3 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu3
+menu_num = get(handles.popupmenu3,'Value');
+
+if menu_num ~= 1
+    folder_selection = handles.folder_string{menu_num};
+    filename = get_csv_fname(handles.cell_profiler_dir,folder_selection);
+    [handles.num3,handles.txt3,handles.raw3]=xlsread(filename);
+    [handles.fnames3, handles.neuroncount3, handles.conv3] = process_xls(handles.num3,handles.txt3,handles.raw3, handles, hObject);
+    handles.colorIdx = handles.colorIdx + 1;
+    handles.numPlots = handles.numPlots + 1;
+    guidata(hObject,handles);
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu3_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function filename = get_csv_fname(file_dir,folder_name)
+fnames = dir(fullfile(file_dir,folder_name));
+for i = 1:length(fnames)
+    temp = strfind(fnames(i).name,'Image.csv');
+    if isempty(temp) == 0
+        idx = i;
+    end
+end
+filename = fullfile(file_dir,folder_name,fnames(idx).name);
