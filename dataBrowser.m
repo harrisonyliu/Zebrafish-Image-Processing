@@ -61,6 +61,7 @@ hold on;plot([0, 45], [0.13 0.13],'m--');plot([10 10],[0 2],'m--');
 axis([0,20,0,0.2]);
 handles.cell_profiler_dir = 'Z:\Harrison\Zebrafish Screening Data\CellProfiler_Results';
 handles.folder_names = dir(handles.cell_profiler_dir);
+handles.image_folder = fullfile(handles.cell_profiler_dir,'Images');
 
 for i = 1:length(handles.folder_names)
     if strcmp(handles.folder_names(i).name,'.') == 1
