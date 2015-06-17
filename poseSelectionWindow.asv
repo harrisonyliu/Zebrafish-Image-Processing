@@ -70,9 +70,9 @@ for i = 1:numel(handles.posename)
     temp_im_bf = imread(finalfname_bf);
     handles.im_cell{i} = temp_im;
     handles.im_cell_bf{i} = temp_im_bf;
+    temp_im_min = min(min(temp_im));
     temp_im_linear = reshape(temp_im,1,numel(temp_im));
     cutoff = prctile(temp_im_linear,99.9);
-    temp_im(temp_im > cutoff) = cutoff;
     axes(eval(current_axes));imagesc(temp_im);colormap gray;axis off;axis image;
 end
 
