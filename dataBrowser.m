@@ -22,7 +22,7 @@ function varargout = dataBrowser(varargin)
 
 % Edit the above text to modify the response to help dataBrowser
 
-% Last Modified by GUIDE v2.5 09-Jun-2015 16:06:20
+% Last Modified by GUIDE v2.5 23-Jun-2015 14:16:46
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,9 +57,12 @@ handles.output = hObject;
 handles.selectidx = 2;
 handles.colorIdx = 1;
 handles.numPlots = 2;
-hold on;plot([0, 45], [0.13 0.13],'m--');plot([10 10],[0 2],'m--');
+handles.countCutoff = 10;
+handles.convCutoff = 0.13;
+hold on;plot([0, 45], [handles.convCutoff handles.convCutoff],'m--');plot([handles.countCutoff handles.countCutoff],[0 2],'m--');
 axis([0,20,0,0.2]);
 handles.cell_profiler_dir = 'Z:\Harrison\Zebrafish Screening Data\CellProfiler_Results';
+handles.hit_list_dir = 'Z:\Harrison\Zebrafish Screening Data\Hit_list';
 handles.folder_names = dir(handles.cell_profiler_dir);
 handles.image_folder = fullfile(handles.cell_profiler_dir,'Images');
 
@@ -121,7 +124,6 @@ function varargout = dataBrowser_OutputFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Get default command line output from handles structure
-varargout{1} = handles.output;
 
 
 
@@ -182,12 +184,26 @@ catch err
     msgbox('This file is incompatible! (Likely no filename information)');
 end
 
-function plotData(neuroncount,conv,handles, hObject)
+function [fnames, neuroncount, conv] = process_txt(filename,handles,hObject)
+txt_output = readtxtfile(filename);
+fnames = txt_output(:,1);
+%Need to remove some of the underscores to keep the formatting the
+%same
+for i = 1:length(fnames)
+    underscore_idx = strfind(fnames{i},'_');
+    fnames{i}(underscore_idx([2,end-1,end])) = ' ';
+    fnames{i} = [fnames{i} '(wv Cy3 - Cy3).tif'];
+end
+neuroncount  = [txt_output{:,2}]';
+conv  = [txt_output{:,3}]';
+plotData(neuroncount,conv,handles,hObject)
+
+function plotData(neuroncount,conv,handles,hObject)
 colors = cellstr(['''b.''';'''g.''';'''r.''']);
 hold on;
 plot(neuroncount,conv,eval(colors{handles.colorIdx}));xlabel('Neuron count');ylabel('Convolution result (a.u.)');
 currX = get(gca,'xlim');currY = get(gca,'ylim');
-newX = max(currX(2),max(neuroncount)); newY = max(currY(2),max(conv));axis([0,newX,0,newY]);
+newX = max(currX(2),max(neuroncount)); newY = max(currY(2),max(conv));axis([0,double(newX),0,newY]);
 title('Neuron and convolutional results');
 
 % --- Executes on button press in pushbutton2.
@@ -216,21 +232,33 @@ for i = 1:length(idx)
     handleNameCount = ['handles.neuroncount' num2str(handleNum) '(' num2str(idx(i)) ')'];
     handleNameConv = ['handles.conv' num2str(handleNum) '(' num2str(idx(i)) ')'];
     handlefName = ['handles.fnames' num2str(handleNum) '{' num2str(idx(i)) '}'];
-%     hold on; plot(eval(handleNameCount),eval(handleNameConv),'r*');hold off;
+    hold on; 
+    a = plot(eval(handleNameCount),eval(handleNameConv),'r*');
     img_name = eval(handlefName);
     colors = cellstr(['''b''';'''g''';'''r''']);
-    dispim(handles.image_folder,img_name, colors{handleNum});
+    dispim(handles.image_folder,img_name, colors{handleNum}, eval(handleNameCount), eval(handleNameConv));
+    delete(a);hold off;
 end
 
-function dispim(im_folder, im_name, color)
+function dispim(im_folder, im_name, color, neuronCount, convCount)
 %Once given the folder and image name, find the filtered image and the
 %color coded neuron identification image and show them to the user.
 im = imread(fullfile(im_folder,im_name));
+%Rescale the image to ignore top 0.1% of brightest pixels for better
+%contrast
+im_linear = reshape(im,1,numel(im));
+cutoff = prctile(im_linear,99.9);
+im(im > cutoff) = cutoff;
+%Now find the image name etc
 idx = strfind(im_name,'.tif') - 1;
 im_id_name= [im_name(1:idx) '_neuronID.png'];
 im_id = imread(fullfile(im_folder,im_id_name));
 titlestr = im_name(1:idx); titlestr(strfind(titlestr,'_')) = ' ';
-figure();imshowpair(im,im_id,'montage');title(titlestr,'Color',eval(color));
+idx2 = strfind(im_name,'(wv') - 1;
+hitstr = im_name(1:idx2);
+%send the image off to be displayed
+hitImageWindow(im,im_id,hitstr,titlestr,color, neuronCount, convCount);
+% figure();imshowpair(im,im_id,'montage');title(titlestr,'Color',eval(color));
 
 function edit2_Callback(hObject, eventdata, handles)
 % hObject    handle to edit2 (see GCBO)
@@ -352,9 +380,15 @@ menu_num = get(handles.popupmenu1,'Value');
 
 if menu_num ~= 1
     folder_selection = handles.folder_string{menu_num};
+    handles.folder_selection = folder_selection;
     filename = get_csv_fname(handles.cell_profiler_dir,folder_selection);
-    [handles.num1,handles.txt1,handles.raw1]=xlsread(filename);
-    [handles.fnames1, handles.neuroncount1, handles.conv1] = process_xls(handles.num1,handles.txt1,handles.raw1, handles, hObject);
+    if isempty(filename) == 1
+        filename = get_txt_fname(handles.cell_profiler_dir,folder_selection);
+        [handles.fnames1, handles.neuroncount1, handles.conv1] = process_txt(filename, handles, hObject);
+    else
+        [handles.num1,handles.txt1,handles.raw1]=xlsread(filename);
+        [handles.fnames1, handles.neuroncount1, handles.conv1] = process_xls(handles.num1,handles.txt1,handles.raw1, handles, hObject);
+    end
     handles.colorIdx = handles.colorIdx + 1;
     handles.numPlots = handles.numPlots + 1;
     guidata(hObject,handles);
@@ -386,9 +420,15 @@ menu_num = get(handles.popupmenu2,'Value');
 
 if menu_num ~= 1
     folder_selection = handles.folder_string{menu_num};
+    handles.folder_selection = folder_selection;
     filename = get_csv_fname(handles.cell_profiler_dir,folder_selection);
-    [handles.num2,handles.txt2,handles.raw2]=xlsread(filename);
-    [handles.fnames2, handles.neuroncount2, handles.conv2] = process_xls(handles.num2,handles.txt2,handles.raw2, handles, hObject);
+    if isempty(filename) == 1
+        filename = get_txt_fname(handles.cell_profiler_dir,folder_selection);
+        [handles.fnames2, handles.neuroncount2, handles.conv2] = process_txt(filename, handles, hObject);
+    else
+        [handles.num2,handles.txt2,handles.raw2]=xlsread(filename);
+        [handles.fnames2, handles.neuroncount2, handles.conv2] = process_xls(handles.num2,handles.txt2,handles.raw2, handles, hObject);
+    end
     handles.colorIdx = handles.colorIdx + 1;
     handles.numPlots = handles.numPlots + 1;
     guidata(hObject,handles);
@@ -420,9 +460,15 @@ menu_num = get(handles.popupmenu3,'Value');
 
 if menu_num ~= 1
     folder_selection = handles.folder_string{menu_num};
+    handles.folder_selection = folder_selection;
     filename = get_csv_fname(handles.cell_profiler_dir,folder_selection);
-    [handles.num3,handles.txt3,handles.raw3]=xlsread(filename);
-    [handles.fnames3, handles.neuroncount3, handles.conv3] = process_xls(handles.num3,handles.txt3,handles.raw3, handles, hObject);
+    if isempty(filename) == 1
+        filename = get_txt_fname(handles.cell_profiler_dir,folder_selection);
+        [handles.fnames3, handles.neuroncount3, handles.conv3] = process_txt(filename, handles, hObject);
+    else
+        [handles.num3,handles.txt3,handles.raw3]=xlsread(filename);
+        [handles.fnames3, handles.neuroncount3, handles.conv3] = process_xls(handles.num3,handles.txt3,handles.raw3, handles, hObject);
+    end
     handles.colorIdx = handles.colorIdx + 1;
     handles.numPlots = handles.numPlots + 1;
     guidata(hObject,handles);
@@ -443,10 +489,204 @@ end
 
 function filename = get_csv_fname(file_dir,folder_name)
 fnames = dir(fullfile(file_dir,folder_name));
+idx = [];
 for i = 1:length(fnames)
     temp = strfind(fnames(i).name,'Image.csv');
     if isempty(temp) == 0
         idx = i;
     end
 end
-filename = fullfile(file_dir,folder_name,fnames(idx).name);
+if isempty(idx) == 1
+    filename = [];
+else
+    filename = fullfile(file_dir,folder_name,fnames(idx).name);
+end
+
+
+function filename = get_txt_fname(file_dir,folder_name)
+fnames = dir(fullfile(file_dir,folder_name));
+idx = [];
+for i = 1:length(fnames)
+    temp = strfind(fnames(i).name,'.txt');
+    if isempty(temp) == 0
+        idx = i;
+    end
+end
+if isempty(idx) == 1
+    filename = [];
+else
+    filename = fullfile(file_dir,folder_name,fnames(idx).name);
+end
+
+
+% --- Executes on key press with focus on figure1 and none of its controls.
+function figure1_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  structure with the following fields (see FIGURE)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
+if strcmp(eventdata.Key,'f1') == 1
+    viewimg(handles);
+elseif strcmp(eventdata.Key,'f3') == 1
+    save_hits(handles);
+end
+
+
+% --- Executes on button press in pushbutton6.
+function pushbutton6_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton6 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+%This will open up the hit list for the first set of data for viewing!
+try
+    if strcmp(handles.folder_selection,'Hits_master') == 1
+        system(['notepad ' [handles.hit_list_dir '\master_list.txt']]);
+    else
+        [assay_date, assay_plate, assay_well] = parsefname(handles.fnames1(1));
+        fname = fullfile(handles.hit_list_dir,[eval('assay_date') '_hits.txt']);
+        system(['notepad ' fname])
+    end
+catch err
+    err
+    msgbox('No hit list found for that assay date! Try identifying hits first');
+end
+
+
+% --- Executes on button press in pushbutton7.
+function pushbutton7_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton8.
+function pushbutton8_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton8 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% temp = evalin('base','hitlist');
+% [assay_date, assay_plate, assay_well] = parsefname(temp);
+save_hits(handles);
+
+function save_hits(handles)
+%Will read in the identified hits from the workspace, save it in the hits
+%and Cellprofiler results folders (duplicate copies). Will also add the
+%identified hits to the master hit list as well in both folders
+try
+    temp = evalin('base','hitlist');
+    [assay_date, assay_plate, assay_well] = parsefname(temp(1,1));
+    %We wish to only save the unique hits in the plate... save to hit list
+    %directory
+    save_unique_hits(temp, [eval('assay_date') '_hits.txt'], handles.hit_list_dir);
+    %Save again in the cellprofiler directory
+    hit_dir = fullfile(handles.cell_profiler_dir, ['Hits_' assay_date]);
+    mkdir(hit_dir);
+    save_unique_hits(temp, [eval('assay_date') '_hits.txt'], hit_dir);
+    
+    %Now find the master hit lists
+    master_path = fullfile(handles.hit_list_dir, 'master_list.txt');
+    master_data = readtxtfile(master_path);
+    new_master = [master_data;temp];
+    master_path = fullfile(handles.cell_profiler_dir,'Hits_master');
+    mkdir(master_path);
+    %Concatenate the new hits to the master list and save it!
+    save_unique_hits(new_master, 'master_list.txt', handles.hit_list_dir);
+    save_unique_hits(new_master, 'master_list.txt', master_path);
+    
+    msgbox('Your hits are saved!');
+catch err
+    err
+    msgbox('Nothing to save! View images and mark hits first');
+end
+
+function save_unique_hits(hit_data, fname, fpath)
+%Will take a list of hit data, the date of the assay, and the path to save
+%the file in. Will screen through the list of hits for unique ones, then
+%save the file as a .txt file
+    [C, ia, ic] = unique(hit_data(:,1));
+    temp_unique = hit_data(ia,:);
+    fileID = fopen(fullfile(fpath,fname),'w');
+    formatSpec = '%s %d %e\r\n';
+    for i = 1:size(temp_unique,1)
+        fprintf(fileID,formatSpec,temp_unique{i,:});
+    end
+    fclose(fileID);
+
+
+function [assay_date, assay_plate, assay_well] = parsefname(name)
+breaks = strfind(name{1},'_');
+assay_date = name{1}(1:breaks(1)-1);
+assay_plate = name{1}(breaks(1)+1:breaks(2)-1);
+assay_well = name{1}(breaks(2)+1:end);
+
+
+% --- Executes when user attempts to close figure1.
+function figure1_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: delete(hObject) closes the figure
+evalin('base',['clear ','hitlist']) 
+delete(hObject);
+
+function autoID(handles, handleNum)
+idx = [];
+for i = 1:length(eval(['handles.neuroncount' num2str(handleNum)]))
+    handleNameCount = ['handles.neuroncount' num2str(handleNum) '(' num2str(i) ')'];
+    handleNameConv = ['handles.conv' num2str(handleNum) '(' num2str(i) ')'];
+    if eval(handleNameCount) > handles.countCutoff && eval(handleNameConv) > handles.convCutoff
+        idx = [idx i];
+    end
+end
+if isempty(idx) == 0
+    mark_and_display(handles, idx, handleNum)
+else
+    msgbox('No hits meet he automated criteria! Please manually select data to view');
+end
+
+
+% --- Executes on button press in pushbutton9.
+function pushbutton9_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton9 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+autoID(handles, 1);
+
+% --- Executes on button press in pushbutton10.
+function pushbutton10_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton10 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+autoID(handles, 2);
+
+% --- Executes on button press in pushbutton11.
+function pushbutton11_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+autoID(handles, 3);
+
+function output = readtxtfile(fname)
+formatSpec = '%s %d %f64\r\n';
+fileID = fopen(fname,'r');
+C = textscan(fileID,formatSpec);
+fclose(fileID);
+
+output = [];
+for i = 1:length(C{1})
+    %column 1 is the wellname, column 2 is neuron count, column 3 is
+    %convolutional measure
+    output = [output;{C{1}{i}, C{2}(i), C{3}(i)}];
+end
+
+
+% --- Executes on button press in pushbutton12.
+function pushbutton12_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton12 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+delete(handles.temp_overlay);
