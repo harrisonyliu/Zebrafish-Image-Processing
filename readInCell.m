@@ -14,13 +14,26 @@ for i = 1:numel(filenames)
 end
 [names_list,order] = sort(names_list');
 
+order_new = zeros(length(order),1);
+idx = 1;
+for i = 1:length(names_list)
+    if isempty(strfind(names_list{i},'Brightfield')) == 1
+        order_new(idx) = i;
+        idx = idx + 1;
+    else
+        idx_bf = i;
+    end
+end
+order_new(end) = idx_bf;order = order_new;
+    
+
 %Now create the image array and start filling it in
-temp_name = filenames(1).name;
+temp_name = filenames(order(1)).name;
 temp_im = imread(fullfile(folder,temp_name));
 w = size(temp_im,1);
 h = size(temp_im,2);
 im_array = zeros(w,h,numel(filenames));
-im_array(:,:,order(1)) = temp_im;
+im_array(:,:,1) = temp_im;
 
 for i = 2:numel(filenames)
     temp_name = filenames(order(i)).name;

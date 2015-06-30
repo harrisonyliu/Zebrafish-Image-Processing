@@ -64,8 +64,19 @@ for i = 1:numel(handles.posename)
     fname = fullfile(handles.pathname, handles.posename(i).name);
     imfname = dir(fullfile(fname,['*' handles.wellname '*']));
     current_axes = ['handles.axes' num2str(i)];
-    finalfname = fullfile(fname,imfname(1).name);
-    finalfname_bf = fullfile(fname,imfname(end).name);
+    %Find the brightfield image and remove it
+    imfname_new = cell(1,length(imfname)-1);
+    idx=1;
+    for i = 1: length(imfname)
+        if isempty(strfind(imfname(i).name,'Brightfield')) == 1
+            imfname_new{idx} = imfname(i).name;
+            idx=idx+1;
+        else
+            idx_bfield = i;
+        end
+    end
+    finalfname = fullfile(fname,imfname_new{1});
+    finalfname_bf = fullfile(fname,imfname(idx_bfield).name);
     temp_im = imread(finalfname);
     temp_im_bf = imread(finalfname_bf);
     handles.im_cell{i} = temp_im;

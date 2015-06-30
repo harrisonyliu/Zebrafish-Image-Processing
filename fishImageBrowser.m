@@ -375,14 +375,19 @@ end
             % hObject    handle to pushbutton6 (see GCBO)
             % eventdata  reserved - to be defined in a future version of MATLAB
             % handles    structure with handles and user data (see GUIDATA)
-            [x,y] = getpts(handles.axes1);
-            z_proj = neuron_z_proj(x,y,handles.current_data(:,:,1:end-1));
-%             BF_crop = neuron_z_proj(x,y,handles.current_data(:,:,end));
-            imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
-            z_proj_filtered = filter_neuron(z_proj);
-            imagesc(z_proj_filtered,'Parent',handles.axes6);colormap gray; axis image;axis off;
-            save_image(z_proj, handles.well_name, fullfile(handles.dir_name,'Extracted neurons'));
-            save_image(z_proj_filtered, handles.well_name, fullfile(handles.dir_name,'Extracted neurons filtered'));
+    [x,y] = getpts(handles.axes1);
+    z_proj = neuron_z_proj(x,y,handles.current_data(:,:,1:end-1));
+    BF_im = crop_brain_area(x,y,handles.current_data(:,:,end));
+    mkdir(fullfile(handles.dir_name,'BF'));
+    [temp, parent] = fileparts(fullfile(handles.dir_name,'BF'));
+    [temp, plate_name] = fileparts(temp);
+    [temp, assay_date] = fileparts(temp);
+    imwrite(uint16(BF_im(11:end-10,11:end-10)),fullfile(handles.dir_name,'BF',[assay_date '_' plate_name '_' handles.well_name '.tif']));
+    imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
+    z_proj_filtered = filter_neuron(z_proj);
+    imagesc(z_proj_filtered,'Parent',handles.axes6);colormap gray; axis image;axis off;
+    save_image(z_proj, handles.well_name, fullfile(handles.dir_name,'Extracted neurons'));
+    save_image(z_proj_filtered, handles.well_name, fullfile(handles.dir_name,'Extracted neurons filtered'));
             
         function centered_zproject(x,y,hObject,handles);
             showFish(handles.current_data(y - 85:y + 85, x - 85:x + 85, :));
