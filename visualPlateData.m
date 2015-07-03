@@ -1,6 +1,6 @@
 function visualPlateData(filename)
 
-rows = {'H' 'G' 'F' 'E' 'D' 'C' 'B' 'A'};
+rows = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
 columns = {'1' '2' '3' '4' '5' '6' '7' '8' '9' '10' '11' '12'};
 [fnames, neuroncount, conv] = parse_xls(filename);
 
@@ -17,7 +17,7 @@ idx = 1;
 for i = 1:length(unique_dates)
     for j = 1:length(unique_plates)
         plate_aggregate{idx} = assign_plate_data(unique_dates{i},unique_plates{j},fnames,neuroncount);
-        h1 = HeatMap(plate_aggregate{idx},'Colormap','jet','RowLabels',rows,'ColumnLabels',columns,'Annotate',1,'AnnotColor','k','Symmetric',0,'ColumnLabelsRotate',1);h1.addTitle([unique_dates{i} ' ' unique_plates{j}]);
+        h1 = HeatMap(plate_aggregate{idx},'Colormap','cool','RowLabels',rows,'ColumnLabels',columns,'Annotate',1,'AnnotColor','k','Symmetric',0,'ColumnLabelsRotate',1);h1.addTitle([unique_dates{i} ' ' unique_plates{j}]);
         idx = idx + 1;
     end
 end
