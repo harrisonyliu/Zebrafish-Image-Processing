@@ -383,7 +383,7 @@ if menu_num ~= 1
     handles.folder_selection = folder_selection;
     handles.filename = get_csv_fname(handles.cell_profiler_dir,folder_selection);
     if isempty(handles.filename) == 1
-        filename = get_txt_fname(handles.cell_profiler_dir,folder_selection);
+        handles.filename = get_txt_fname(handles.cell_profiler_dir,folder_selection);
         [handles.fnames1, handles.neuroncount1, handles.conv1] = process_txt(handles.filename, handles, hObject);
     else
         [handles.num1,handles.txt1,handles.raw1]=xlsread(handles.filename);
@@ -423,7 +423,7 @@ if menu_num ~= 1
     handles.folder_selection = folder_selection;
     handles.filename = get_csv_fname(handles.cell_profiler_dir,folder_selection);
     if isempty(handles.filename) == 1
-        filename = get_txt_fname(handles.cell_profiler_dir,folder_selection);
+        handles.filename = get_txt_fname(handles.cell_profiler_dir,folder_selection);
         [handles.fnames2, handles.neuroncount2, handles.conv2] = process_txt(handles.filename, handles, hObject);
     else
         [handles.num2,handles.txt2,handles.raw2]=xlsread(handles.filename);
@@ -463,7 +463,7 @@ if menu_num ~= 1
     handles.folder_selection = folder_selection;
     handles.filename = get_csv_fname(handles.cell_profiler_dir,folder_selection);
     if isempty(handles.filename) == 1
-        filename = get_txt_fname(handles.cell_profiler_dir,folder_selection);
+        handles.filename = get_txt_fname(handles.cell_profiler_dir,folder_selection);
         [handles.fnames3, handles.neuroncount3, handles.conv3] = process_txt(handles.filename, handles, hObject);
     else
         [handles.num3,handles.txt3,handles.raw3]=xlsread(handles.filename);
