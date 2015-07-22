@@ -18,7 +18,7 @@ order_new = zeros(length(order),1);
 idx = 1;
 for i = 1:length(names_list)
     if isempty(strfind(names_list{i},'Brightfield')) == 1
-        order_new(idx) = i;
+        order_new(idx) = order(i);
         idx = idx + 1;
     else
         idx_bf = i;

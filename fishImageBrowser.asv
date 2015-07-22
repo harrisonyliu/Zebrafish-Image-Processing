@@ -60,13 +60,7 @@ handles.maxNum = size(handles.current_data,3) - 1;
 %2048
 im_size = size(handles.current_data(:,:,1),1);
 if im_size < 2048
-    temp_im = zeros(2048,2048, handles.maxNum + 1);
-    for i = 1:handles.maxNum + 1
-        temp_im(:,:,i) = imresize(handles.current_data(:,:,i),2048/im_size);
-    end
-    handles.current_data = temp_im;
-end
-
+    for i = 1:han
 imagesc(handles.current_data(:,:,1),'Parent',handles.axes1);colormap gray;axis image;axis off;
 axes(handles.axes1);title(['Fish Z-stack 1 of ' num2str(handles.maxNum)]);
 imagesc(handles.current_data(:,:,end),'Parent',handles.axes2);colormap gray;axis image;axis off;
