@@ -23,22 +23,17 @@ catch err
 end
 
 try
-    %Take the max z-projection of the entire fish
-    FL = max(FL(:,:,1:end-1),[],3);
-    
-    %Now using the coordinates calculated from the previous autorotate,
-    %begin to isolate the fish
-    first_crop = FL(res.crop1(1):res.crop1(2),res.crop1(3):res.crop1(4));
+    first_crop = FL(res.crop1(1):res.crop1(2),res.crop1(3):res.crop1(4),1:end-1);
     rotate_im = imrotate(first_crop,res.phi,'crop');
     first_crop_BF = BF(res.crop1(1):res.crop1(2),res.crop1(3):res.crop1(4),end);
     rotate_im_BF = imrotate(first_crop_BF,res.phi,'crop');
     
-    final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4));
+    final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4),:);
     final_crop_BF = rotate_im_BF(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4));
-    fig = figure; imagesc(final_crop(:,:));colormap gray; axis image;axis off;title(well_name);
+    fig = figure; imagesc(final_crop(:,:,1));colormap gray; axis image;axis off;title(well_name);
     hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
     plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
-    z_proj = crop_brain_area(res.neuron(1),res.neuron(2),final_crop);
+    z_proj = neuron_z_proj(res.neuron(1),res.neuron(2),final_crop);
 %         figure();imagesc(z_proj);colormap gray; axis image;axis off;
     z_proj_filtered = filter_neuron(z_proj);
     brain_BF = crop_brain_area(res.neuron(1),res.neuron(2),final_crop_BF);
@@ -66,7 +61,7 @@ end
 function z_proj = neuron_z_proj(x,y,im)
 %This function will take the image passed to it, and crop out a 191 x 221
 %z-project image around the central point
-z_proj = crop_brain_area(x,y,im);
+neuron_crop = crop_brain_area(x,y,im);
 %Doing max z-projection
 z_proj = max(neuron_crop,[],3);
 

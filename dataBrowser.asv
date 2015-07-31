@@ -883,8 +883,8 @@ dispControls(hObject, handles);
 
 function dispControls(hObject, handles)
 hold on;
-handles.positive = plot(handles.neuroncount1(handles.idx_positive), handles.conv1(handles.idx_positive),'go','LineWidth',2);
-handles.negative = plot(handles.neuroncount1(handles.idx_negative), handles.conv1(handles.idx_negative),'ro','LineWidth',2);
+handles.positive = plot(handles.neuroncount1(handles.idx_positive), handles.conv1(handles.idx_positive),'go');
+handles.negative = plot(handles.neuroncount1(handles.idx_negative), handles.conv1(handles.idx_negative),'ro');
 guidata(hObject, handles);
 
 
@@ -893,9 +893,8 @@ function pushbutton16_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton16 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-try
+
+if exist(handles.positive) ~= 0
     delete(handles.positive);
     delete(handles.negative);
-catch err
-    msgbox('Plot some control data first!');
 end

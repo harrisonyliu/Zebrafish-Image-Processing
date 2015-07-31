@@ -939,7 +939,8 @@ function success = load_and_extract(folder,well_name)
 p = folder;
 filenames = dir(fullfile(folder,['*' well_name '*']));
 names_list = cell(1,numel(filenames));
-%Here we sort the list of names properly so we go in the right image order
+%Here we sort the list of names properly so we go in the right image order,
+%with the last image being the brightfield one
 for i = 1:numel(filenames)
     temp_name = filenames(i).name;
     idx = strfind(temp_name,'z') + 3;
@@ -949,10 +950,19 @@ for i = 1:numel(filenames)
         names_list{i} = temp_name;
     end
 end
-[names_list,order] = sort(names_list');
+[names_list,order] = sort(names_list);
+
+%Find the brightfield image and move it to the end of the order list
+for i = 1:length(names_list)
+    if isempty(strfind(names_list{i},'Brightfield')) == 0
+        idx_bf = i;
+    end
+end
+order(idx_bf) = [];
+order(end+1) = idx_bf;
 
 %Now create the image array and start filling it in
-temp_name = filenames(1).name;
+temp_name = filenames(order(1)).name;
 % temp_im = imread(fullfile(folder,temp_name));
 % w = size(temp_im,1);
 % h = size(temp_im,2);
@@ -966,7 +976,7 @@ scale_factor = 2048/im_size;
 if scale_factor ~= 1
     temp_im = imresize(temp_im, scale_factor);
 end
-im_array(:,:,order(1)) = temp_im;
+im_array(:,:,1) = temp_im;
 
 for i = 2:numel(filenames)
     temp_name = filenames(order(i)).name;

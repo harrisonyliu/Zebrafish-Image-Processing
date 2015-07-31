@@ -6,21 +6,23 @@ bf = imresize(bf,1/scale);
 
 res = struct();
 %Image preprocessing and binarization
-im_normalized = im ./ max(max(im));
+im_normalized = bf ./ max(max(bf));
 level = graythresh(im_normalized);
 im_bw = im2bw(im_normalized,level);
+im_bw = imcomplement(im_bw);
 
-% figure();imshowpair(im,im_bw,'montage');
-im_noiseRemoved = bwareaopen(im_bw,100/scale);
-% figure();imshowpair(im_bw,im_noiseRemoved,'montage');
+cc = bwconncomp(im_bw);
+centroids = regionprops(cc,'centroid','area');
+area = [centroids.Area];
+max_idx = find(area == max(area));
+im_noiseRemoved_2 = zeros(size(im_bw));
+im_noiseRemoved_2(cc.PixelIdxList{max_idx}) = 1;
 
-SE = strel('disk',100/scale);
-im_closed = imclose(im_noiseRemoved,SE);
-im_noiseRemoved_2 = bwareaopen(im_closed,2000/scale);
-% figure();imshowpair(im_noiseRemoved, im_noiseRemoved_2,'montage');
+SE = strel('disk',50/scale);
+im_closed = imclose(im_noiseRemoved_2,SE);
 
 %PCA Analysis
-im_reshape = reshape(im_noiseRemoved_2,numel(im_closed),1);
+im_reshape = reshape(im_closed,numel(im_closed),1);
 [X,Y] = meshgrid(1:size(im,1),1:size(im,2));
 x_reshape = reshape(X,numel(X),1);
 y_reshape = reshape(Y,numel(Y),1);
@@ -35,8 +37,12 @@ for i = 1:size(pca_matrix,1)
     end
 end
 
-x_center = round(sum(pca_matrix_final(:,2)) / size(pca_matrix_final,1));
-y_center = round(sum(pca_matrix_final(:,1)) / size(pca_matrix_final,1));
+%The head region is roughly circular, find it and center the cropping on
+%the head
+[centers, radii, metric] = imfindcircles(im_closed,[80 150],'Sensitivity',0.99);
+x_center = centers(1,2); y_center = centers(1,1);
+% x_center = round(sum(pca_matrix_final(:,2)) / size(pca_matrix_final,1));
+% y_center = round(sum(pca_matrix_final(:,1)) / size(pca_matrix_final,1));
 bounds = [(x_center - 1), (size(im,1) - x_center), (y_center - 1), (size(im,2) - y_center), 1050/scale];
 %Find the smallest distance from the center to the edge of the image in
 %order to find the largest possible cropped image;
@@ -53,6 +59,7 @@ im_cropped_bf = bf(cropy1:cropy2, cropx1:cropx2);
 p1 = COEFF(:, 1); m1 = p1(1)/p1(2);
 p2 = COEFF(:, 2); m2 = p2(1)/p2(2);
 % figure();imagesc(im_closed);colormap gray;axis off;axis image;
+% viscircles(centers(1,:), radii(1),'EdgeColor','b');
 % hold on;
 % plot([y_center (500*p1(1) + y_center)], [x_center, (500*p1(2) + x_center)], 'b-', 'linewidth', 3);
 % plot([y_center (500*p2(1) + y_center)], [x_center, (500*p2(2) + x_center)], 'r-', 'linewidth', 3);
