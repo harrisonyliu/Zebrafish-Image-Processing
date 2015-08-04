@@ -190,14 +190,14 @@ while numel(centroids) > 2
 end
 
 %Plotting
-figure();imagesc(BF_im);colormap gray;axis image;
-figure();imagesc(res);axis image;
-figure();imagesc(res_bw);axis image;
-figure();imagesc(res_bw_closed);axis image;
-figure();imagesc(res_noise_removed);colormap gray;axis off;axis image;
-x1 = centroids(1).Centroid(1);x2 = centroids(2).Centroid(1);
-y1 = centroids(1).Centroid(2);y2 = centroids(2).Centroid(2); 
-hold on;plot(x1,y1,'r*');plot(x2,y2,'r*');hold off;
-figure();imshowpair(BF_im,res_noise_removed);
-hold on;plot(x1,y1,'b*');plot(x2,y2,'b*');hold off;
+% figure();imagesc(BF_im);colormap gray;axis image;
+% figure();imagesc(res);axis image;
+% figure();imagesc(res_bw);axis image;
+% figure();imagesc(res_bw_closed);axis image;
+% figure();imagesc(res_noise_removed);colormap gray;axis off;axis image;
+% x1 = centroids(1).Centroid(1);x2 = centroids(2).Centroid(1);
+% y1 = centroids(1).Centroid(2);y2 = centroids(2).Centroid(2); 
+% hold on;plot(x1,y1,'r*');plot(x2,y2,'r*');hold off;
+% figure();imshowpair(BF_im,res_noise_removed);
+% hold on;plot(x1,y1,'b*');plot(x2,y2,'b*');hold off;
 end
