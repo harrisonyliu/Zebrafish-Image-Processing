@@ -100,7 +100,6 @@ im_crop_final_bf = im_rotated_bf(smallcropy1:smallcropy2, smallcropx1:smallcropx
 
 cc = detectEyes(im_crop_final_bf,scale);
 centroids = regionprops(cc,'centroid','area');
-centroids = twoEyes(centroids);
 
 %Now we check to see if the eyes are in the bottom or top of the image. If
 %it's located at the bottom of the image we flip the image upside down and
@@ -116,7 +115,6 @@ if y1 > y_half
     res.phi = res.phi + 180;
     cc = detectEyes(im_crop_final_bf,scale);
     centroids = regionprops(cc,'centroid','area');
-    centroids = twoEyes(centroids);
     x1 = centroids(1).Centroid(1);x2 = centroids(2).Centroid(1);
     y1 = centroids(1).Centroid(2);y2 = centroids(2).Centroid(2);
 end
@@ -169,32 +167,32 @@ res_noise_removed = bwareaopen(res_bw_closed,100/scale);
 
 %Now to analyze and find the centers of the two largest hits
 cc = bwconncomp(res_noise_removed, 4);
-% centroids = regionprops(cc,'centroid','area');
-% while numel(centroids) > 2
-%     area = [centroids.Area];
-%     min_idx = find(area == min(area));
-%     centroids(min_idx) = [];
-% end
-% 
-% %Plotting
-% figure();imagesc(BF_im);colormap gray;axis image;
-% % figure();imagesc(res);axis image;
-% figure();imagesc(res_bw);axis image;
-% % figure();imagesc(res_bw_closed);axis image;
-% figure();imagesc(res_noise_removed);colormap gray;axis off;axis image;
-% x1 = centroids(1).Centroid(1);x2 = centroids(2).Centroid(1);
-% y1 = centroids(1).Centroid(2);y2 = centroids(2).Centroid(2); 
-% hold on;plot(x1,y1,'r*');plot(x2,y2,'r*');hold off;
-% figure();imshowpair(BF_im,res_noise_removed);
-% hold on;plot(x1,y1,'b*');plot(x2,y2,'b*');hold off;
+centroids = regionprops(cc,'centroid','area');
+while numel(centroids) > 2
+    area = [centroids.Area];
+    min_idx = find(area == min(area));
+    centroids(min_idx) = [];
 end
 
-function centroids = twoEyes(centroids)
+%Plotting
+figure();imagesc(BF_im);colormap gray;axis image;
+% figure();imagesc(res);axis image;
+figure();imagesc(res_bw);axis image;
+% figure();imagesc(res_bw_closed);axis image;
+figure();imagesc(res_noise_removed);colormap gray;axis off;axis image;
+x1 = centroids(1).Centroid(1);x2 = centroids(2).Centroid(1);
+y1 = centroids(1).Centroid(2);y2 = centroids(2).Centroid(2); 
+hold on;plot(x1,y1,'r*');plot(x2,y2,'r*');hold off;
+figure();imshowpair(BF_im,res_noise_removed);
+hold on;plot(x1,y1,'b*');plot(x2,y2,'b*');hold off;
+end
+
+function centroids = 
 %Error checking: a "good" fish has exactly two eyes
 if numel(centroids) < 2
     disp 'Less than two eyes detected for fish, quitting'
     res = [];
-    %     figure();imagesc(bf);colormap gray;axis image;
+%     figure();imagesc(bf);colormap gray;axis image;
     return
 elseif numel(centroids) > 2
     %If more than two eyes detected, start deleting additional eyes,
@@ -204,5 +202,4 @@ elseif numel(centroids) > 2
         min_idx = find(area == min(area));
         centroids(min_idx) = [];
     end
-end
 end
