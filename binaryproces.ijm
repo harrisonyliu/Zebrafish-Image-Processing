@@ -1,0 +1,9 @@
+run("Erode");
+run("Erode");
+run("Dilate");
+run("Dilate");
+run("Dilate");
+run("Dilate");
+run("Dilate");
+run("Close-");
+run("Close-");

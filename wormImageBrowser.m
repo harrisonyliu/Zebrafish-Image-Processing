@@ -276,9 +276,18 @@ if strcmp(eventdata.Key,'4') == 1
 end
 
 if strcmp(eventdata.Key,'5') == 1
-    [x,y] = getpts(handles.axes1);
+    [x,y] = getpts(handles.axes1); handles.x = x;handles.y = y;
     z_proj = neuron_z_proj(x,y,handles.current_data(:,:,1:end-1));
-    BF_im = crop_brain_area(x,y,handles.current_data(:,:,end));
+    BF_temp = handles.current_data(:,:,end);
+    BF = (BF_temp - min(min(BF_temp))) ./ max(max(BF_temp));
+    thresh = graythresh(BF)/get(handles.slider2,'Value');
+    BF_bw = im2bw(BF,thresh);
+    SE = strel('disk',30);
+    BF_bw_closed = imclose(BF_bw,SE);
+    SE = strel('disk',8);
+    BF_bw_eroded = imerode(BF_bw_closed,SE);
+    BF_im = crop_brain_area(x,y,BF_bw_eroded);
+    axes(handles.axes4); imshowpair(z_proj,imcomplement(BF_im));                                                                                          
     mkdir(fullfile(handles.dir_name,'BF'));
     [temp, parent] = fileparts(fullfile(handles.dir_name,'BF'));
     [temp, plate_name] = fileparts(temp);
@@ -289,6 +298,7 @@ if strcmp(eventdata.Key,'5') == 1
     imagesc(z_proj_filtered,'Parent',handles.axes6);colormap gray; axis image;axis off;
     save_image(z_proj, handles.well_name, fullfile(handles.dir_name,'Extracted neurons'));
     save_image(z_proj_filtered, handles.well_name, fullfile(handles.dir_name,'Extracted neurons filtered'));
+    guidata(hObject,handles);
 end
 end
 

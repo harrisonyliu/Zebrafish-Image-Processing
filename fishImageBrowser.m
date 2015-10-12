@@ -22,7 +22,7 @@ function varargout = fishImageBrowser(varargin)
 
 % Edit the above text to modify the response to help fishImageBrowser
 
-% Last Modified by GUIDE v2.5 30-Dec-2014 14:37:20
+% Last Modified by GUIDE v2.5 23-Sep-2015 16:30:51
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -90,6 +90,7 @@ set(handles.slider1,'Max',handles.maxNum);
 set(handles.slider1,'Min',1);
 set(handles.slider1,'Value',1);
 set(handles.slider1,'SliderStep',[1/handles.maxNum , 3/handles.maxNum]);
+set(handles.slider2,'Value',2);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -160,7 +161,6 @@ try
     % rotate_im(:,:,i) = imrotate(first_crop(:,:,i),res.phi,'crop');
     % end
     rotate_im = imrotate(first_crop,res.phi,'crop');
-    
     final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4),:);
     imagesc(final_crop(:,:,1),'Parent',handles.axes4);colormap gray; axis image;axis off;axes(handles.axes4);
     hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
@@ -389,7 +389,16 @@ end
             % handles    structure with handles and user data (see GUIDATA)
     [x,y] = getpts(handles.axes1);
     z_proj = neuron_z_proj(x,y,handles.current_data(:,:,1:end-1));
-    BF_im = crop_brain_area(x,y,handles.current_data(:,:,end));
+    BF_temp = handles.current_data(:,:,end);
+    BF = (BF_temp - min(min(BF_temp))) ./ max(max(BF_temp));
+    thresh = graythresh(BF)/2;
+    BF_bw = im2bw(BF,thresh);
+    SE = strel('disk',30);
+    BF_bw_closed = imclose(BF_bw,SE);
+    SE = strel('disk',8);
+    BF_bw_eroded = imerode(BF_bw_closed,SE);
+    BF_im = crop_brain_area(x,y,BF_bw_eroded);
+    axes(handles.axes4); imshowpair(z_proj,imcomplement(BF_im)); 
     mkdir(fullfile(handles.dir_name,'BF'));
     [temp, parent] = fileparts(fullfile(handles.dir_name,'BF'));
     [temp, plate_name] = fileparts(temp);
@@ -432,3 +441,42 @@ crop = im(y1:y2, x1:x2, :);
         diff_Im(diff_Im < 0) = 0;
         trim = round(kernel_size/2) + 1;
         filtered_res = diff_Im(1+trim:end - trim,11:end - trim);
+
+
+% --- Executes on slider movement.
+function slider2_Callback(hObject, eventdata, handles)
+% hObject    handle to slider2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+z_proj = neuron_z_proj(handles.x,handles.y,handles.current_data(:,:,1:end-1));
+BF_temp = handles.current_data(:,:,end);
+BF = (BF_temp - min(min(BF_temp))) ./ max(max(BF_temp));
+thresh = graythresh(BF)/get(handles.slider2,'Value');
+BF_bw = im2bw(BF,thresh);
+SE = strel('disk',30);
+BF_bw_closed = imclose(BF_bw,SE);
+SE = strel('disk',8);
+BF_bw_eroded = imerode(BF_bw_closed,SE);
+BF_im = crop_brain_area(handles.x,handles.y,BF_bw_eroded);
+axes(handles.axes4); imshowpair(z_proj,imcomplement(BF_im));
+mkdir(fullfile(handles.dir_name,'BF'));
+[temp, parent] = fileparts(fullfile(handles.dir_name,'BF'));
+[temp, plate_name] = fileparts(temp);
+[temp, assay_date] = fileparts(temp);
+imwrite(uint16(BF_im(11:end-10,11:end-10)),fullfile(handles.dir_name,'BF',[assay_date '_' plate_name '_' handles.well_name '.tif']));
+imagesc(z_proj,'Parent',handles.axes5);colormap gray; axis image;axis off;
+
+
+% --- Executes during object creation, after setting all properties.
+function slider2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end

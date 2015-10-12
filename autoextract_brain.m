@@ -1,4 +1,4 @@
-function success = autoextract_brain(FL, BF, save_option, folder, well_name)
+function [success, dir_neuron, dir_neuron_filter, dir_brain_ID, dir_BF] = autoextract_brain(FL, BF, save_option, folder, well_name,eyeparam)
 %Will autorotate the fish, ID the brain, and take a z-projection of the
 %neurons as well as a filtered version of the image. Save option 0 = don't
 %save anything, save option 1 = save only the filtered and unfiltered
@@ -17,7 +17,7 @@ dir_BF = fullfile(temp, assay_date, plate_name, 'BF');
 
 %Autorotating fish and processing
 try
-    res = autorotate_small(FL(:,:,1),BF);
+    [res, eyes] = autorotate_small(FL(:,:,1),BF, eyeparam);
 catch err
     disp('Something is wrong with this fish! Quitting...');
 end
@@ -35,13 +35,13 @@ try
     
     final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4));
     final_crop_BF = rotate_im_BF(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4));
-    fig = figure; imagesc(final_crop(:,:));colormap gray; axis image;axis off;title(well_name);
+    fig = figure; imshowpair(final_crop(:,:),imcomplement(eyes));colormap gray; axis image;axis off;title(well_name);
     hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
     plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
     z_proj = crop_brain_area(res.neuron(1),res.neuron(2),final_crop);
 %         figure();imagesc(z_proj);colormap gray; axis image;axis off;
     z_proj_filtered = filter_neuron(z_proj);
-    brain_BF = crop_brain_area(res.neuron(1),res.neuron(2),final_crop_BF);
+    brain_BF = crop_brain_area(res.neuron(1),res.neuron(2),eyes);
 %         figure();imagesc(z_proj_filtered);colormap gray; axis image;axis off;
     if save_option > 0
         mkdir(dir_neuron); mkdir(dir_neuron_filter);

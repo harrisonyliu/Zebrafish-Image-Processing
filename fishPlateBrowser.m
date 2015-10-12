@@ -22,7 +22,7 @@ function varargout = fishPlateBrowser(varargin)
 
 % Edit the above text to modify the response to help fishPlateBrowser
 
-% Last Modified by GUIDE v2.5 28-Apr-2015 16:07:22
+% Last Modified by GUIDE v2.5 23-Sep-2015 17:03:39
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -908,7 +908,9 @@ for i = 1:8
         temp_wellname = handles.pose_Array.wellname{i,j};
         
         if strcmp(temp_folder,'empty') == 0 && isempty(temp_folder) == 0
-            success = load_and_extract(temp_folder,temp_wellname);
+            eyeparam = str2num(get(handles.edit2,'String'));
+            [success, handles.dir_neuron, handles.dir_neuron_filter, ...
+                handles.dir_brain_ID, handles.dir_BF] = load_and_extract(temp_folder,temp_wellname,eyeparam);
             handles.pose_Array.success(i,j) = success;
             assignin('base', 'batch_results', handles.pose_Array);
         end
@@ -923,7 +925,47 @@ handles.pose_Array.err_matrix = brainCheck(fullfile(mat_save_dir,'Brain ID'));
 save_batch(handles);
 redo_matrix = handles.pose_Array.err_matrix + handles.pose_Array.success;
 label_wells(handles, redo_matrix);
+
+%Find any images that were saved that belonged to wells that need to be
+%re-done and delete them
+fnames_temp = dir(handles.dir_BF);
+fnames_temp = {fnames_temp.name}';
+for i = 1:size(redo_matrix,1)
+    for j = 1:size(redo_matrix,2)
+        if redo_matrix(i,j) == 0 || isnan(redo_matrix(i,j)) == 1
+            wellname = return_wellname(i,j);
+            match = strfind(fnames_temp,wellname);
+            %Search the list of files for one that matches the well we're
+            %interested in!
+            if isempty([match{:}]) == 0
+                fname_idx = find(~cellfun(@isempty,match));
+                bf_name_temp = fnames_temp{fname_idx};
+                [~,bf_name,~] = fileparts(bf_name_temp);
+                if j == 1
+                    append_FL = 'wv Cy3 - Cy3).tif';
+                else
+                    append_FL = '(wv Cy3 - Cy3).tif';
+                end
+                neuron_name = fullfile(handles.dir_neuron,[bf_name append_FL]);
+                neuron_name_filter = fullfile(handles.dir_neuron_filter,[bf_name append_FL]);
+                id_name = fullfile(handles.dir_brain_ID,[bf_name '.png']);
+                bf_name = fullfile(handles.dir_BF,[bf_name '.tif']);
+                delete(neuron_name); delete(neuron_name_filter); delete(id_name); delete(bf_name);
+            end
+        end
+    end
+end
+                
 guidata(hObject, handles);
+
+function wellname = return_wellname(row,col)
+letter = 'ABCDEFGH';
+if col == 1
+    num = '1)';
+else
+    num = num2str(col);
+end
+wellname = [letter(row) ' - ' num];
 
 function save_batch(handles)
 path_minus_pose = get(handles.edit1,'String');
@@ -935,7 +977,7 @@ batch_results = handles.pose_Array;
 assignin('base', 'batch_results', batch_results);
 save(fname, 'batch_results');
 
-function success = load_and_extract(folder,well_name)
+function [success, dir_neuron, dir_neuron_filter, dir_brain_ID, dir_BF] = load_and_extract(folder,well_name,eyeparam)
 p = folder;
 filenames = dir(fullfile(folder,['*' well_name '*']));
 names_list = cell(1,numel(filenames));
@@ -988,7 +1030,8 @@ for i = 2:numel(filenames)
 end
 
 FL = im_array(:,:,1:end-1); BF = im_array(:,:,end);
-success = autoextract_brain(FL, BF, 2, folder, well_name);
+[success, dir_neuron, dir_neuron_filter, ...
+                dir_brain_ID, dir_BF] = autoextract_brain(FL, BF, 2, folder, well_name, eyeparam);
 
 
 % --- Executes on button press in pushbutton100.
@@ -1120,3 +1163,26 @@ function pushbutton102_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 imageable = tally_pose_success(handles);
 cum_pose_hist(handles, imageable);
+
+
+
+function edit2_Callback(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit2 as text
+%        str2double(get(hObject,'String')) returns contents of edit2 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

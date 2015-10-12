@@ -24,10 +24,15 @@ for i = 1:length(unique_dates)
     end
 end
 
-createManhattanPlot(plate_aggregate, 'Neuron Counts');
-createManhattanPlot(plate_conv, 'Convolutional Feature');
+createManhattanPlot(plate_aggregate, 'Neuron Counts',0);
+createManhattanPlot(plate_conv, 'Convolutional Feature',0);
+createManhattanPlot(plate_aggregate, 'Avg. Neuron Counts',1);
+createManhattanPlot(plate_conv, 'Avg. Convolutional Feature',1);
 
-function createManhattanPlot(plate_aggregate, chart_title)
+function createManhattanPlot(plate_aggregate, chart_title, option)
+%Will create a manhattan plot from cell data passed to it. Option 0 if you
+%want individual well data, option 1 if you wish to average data across
+%wells
 well_array = nan(80,numel(plate_aggregate));
 wellname_array = cell(80, numel(plate_aggregate));
 wellname_pos = cell(8,numel(plate_aggregate));
@@ -60,6 +65,12 @@ for i = 1:numel(plate_aggregate)
     end
 end
 
+if option == 1
+    positive_ctrls = nanmean(positive_ctrls,2);
+    negative_ctrls = nanmean(negative_ctrls,2);
+    well_array = nanmean(well_array,2);
+end
+
 figure();hold on;title([chart_title ' Manhattan Plot']);
 ylabel('Neuron Count');xlabel('Observation');
 %First plot the positive controls
@@ -88,13 +99,17 @@ end
 %Calculate and display neuron count cutoffs (3 standard deviations above
 %the mean neuron count of the negative controls)
 negative_mean = nanmean(negative_ctrls,2);
-negative_std = std(negative_mean);
-cutoff = mean(negative_mean) + 3*negative_std;
+negative_std = nanstd(negative_mean);
+cutoff = nanmean(negative_mean) + 3*negative_std;
 plot([0 length(placeholder)],[cutoff cutoff], 'r--');hold off;
 
 %Now add well labels
 well_labels = [wellname_pos(:,1); wellname_neg(:,1); wellname_array(:,1)];
-set(gca,'XTick',2:3:length(placeholder)-1);
+if option == 1
+    set(gca,'XTick',1:length(placeholder));
+else
+    set(gca,'XTick',2:3:length(placeholder)-1);
+end
 % set(gca,'XTick',1:length(placeholder));
 set(gca,'XTickLabel',well_labels);
 

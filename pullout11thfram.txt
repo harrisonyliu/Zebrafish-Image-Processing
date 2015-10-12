@@ -1,0 +1,6 @@
+title = getTitle();
+run("Make Substack...", "frames=1-10,12-22");
+title_color = getTitle();
+selectWindow(title);
+run("Make Substack...", "frames=11");
+title_BF = getTitle();

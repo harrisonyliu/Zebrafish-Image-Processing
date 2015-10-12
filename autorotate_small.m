@@ -1,4 +1,8 @@
-function res = autorotate_small(im,bf)
+function [res, eyes] = autorotate_small(im,bf, eyeparam)
+%This function will automatically rotate the fish, find its eyes, and
+%locate its brain. It will do this with an image that is half the size of
+%the original
+
 % [im_crop_final im_crop_final_bf, eye1, eye2, neuron, midpt]
 scale = 2; %We wish to do all the processing on a half-sized image
 im = imresize(im,1/scale);
@@ -98,23 +102,29 @@ im_crop_final_bf = im_rotated_bf(smallcropy1:smallcropy2, smallcropx1:smallcropx
 % figure();imshowpair(im,im_rotated,'montage');
 % figure();imagesc(im_cropped_bf);colormap gray;axis image;
 
-cc = detectEyes(im_crop_final_bf,scale);
+[cc, eyes] = detectEyes(im_crop_final_bf,scale,eyeparam);
 centroids = regionprops(cc,'centroid','area');
 centroids = twoEyes(centroids);
+x1 = centroids(1).Centroid(1);x2 = centroids(2).Centroid(1);
+y1 = centroids(1).Centroid(2);y2 = centroids(2).Centroid(2);
 
 %Now we check to see if the eyes are in the bottom or top of the image. If
 %it's located at the bottom of the image we flip the image upside down and
 %rerun the eye analysis.
-%Find the locations of the pupils
-y_half = round(size(im_crop_final_bf,1) / 2);
-x1 = centroids(1).Centroid(1);x2 = centroids(2).Centroid(1);
-y1 = centroids(1).Centroid(2);y2 = centroids(2).Centroid(2);
-if y1 > y_half
+%Threshold the image and see if there are more pixels above or below the
+%centerline. Flip 180 if there are more white pixels below
+bf = (im_crop_final_bf - min(min(im_crop_final_bf))) ./ max(max(im_crop_final_bf));
+thresh = graythresh(bf);
+bf_bw = im2bw(bf,thresh);
+bf_bw_top = sum(sum(bf_bw(1:round(size(bf_bw,1)/2),:)));
+bf_bw_bottom = sum(sum(bf_bw(round(size(bf_bw,1)/2)+1:end,:)));
+
+if bf_bw_bottom > bf_bw_top
     im_crop_final = imrotate(im_crop_final,180);
     %     im_crop_final_bw = imrotate(im_crop_final_bw,180);
     im_crop_final_bf = imrotate(im_crop_final_bf,180);
     res.phi = res.phi + 180;
-    cc = detectEyes(im_crop_final_bf,scale);
+    [cc, eyes] = detectEyes(im_crop_final_bf,scale,eyeparam);
     centroids = regionprops(cc,'centroid','area');
     centroids = twoEyes(centroids);
     x1 = centroids(1).Centroid(1);x2 = centroids(2).Centroid(1);
@@ -125,6 +135,7 @@ pupil_distance = sqrt((x2 - x1)^2 + (y2 - y1)^2); neuron_distance = 75/scale;
 % figure();imagesc(im_crop_final_bw);colormap gray; axis off;axis image;title('Final Crop BW');
 % figure();imagesc(im_crop_final_bf);colormap gray; axis off;axis image;title('Final Crop BF');
 % figure();imagesc(im_crop_final);colormap gray; axis off;axis image;title('Final Crop FL');
+% figure();imshowpair(im_crop_final, eyes);title('Eye Identification');
 
 %Now that we know where the pupils are, the brain is some distance
 %away in the perpendicular direction to the eyes
@@ -141,6 +152,7 @@ neuron_x = midpt_x + neuron_distance * sind(-theta);
 neuron_y = midpt_y + neuron_distance * cosd(-theta);
 res.eye1 = 2*[round(x1), round(y1)];res.eye2 = 2*[round(x2), round(y2)];
 res.neuron = 2*[round(neuron_x), round(neuron_y)];res.midpt = 2*[round(midpt_x), round(midpt_y)];
+eyes = imresize(eyes,scale);
 
 % figure();imagesc(im_crop_final);colormap gray; axis off;axis image;title('Final Crop');
 % title('After Tail-Head Correction');hold on;plot(x1,y1,'r*');plot(x2,y2,'r*');plot([x1 x2],[y1 y2],'r-');
@@ -150,10 +162,11 @@ res.neuron = 2*[round(neuron_x), round(neuron_y)];res.midpt = 2*[round(midpt_x),
 % title('After Tail-Head Correction');hold on;plot(x1,y1,'r*');plot(x2,y2,'r*');hold off;
 end
 
-function [cc] = detectEyes(BF_im,scale)
+function [cc, BF_bw_eroded] = detectEyes(BF_im,scale,eyeparam)
 load('eye_mask_center.mat');
 eyeFilter = imresize(eyeFilter, 1/scale);
 BF_im = double(BF_im) - mean(mean(BF_im));
+BF = (BF_im - min(min(BF_im))) ./ max(max(BF_im));
 % [centers, radii] = imfindcircles(BF_im,[25 40],'ObjectPolarity','dark','Sensitivity',0.97);
 % figure();imagesc(BF_im);colormap gray; axis image;
 % h = viscircles(centers(1:2,:),radii(1:2));
@@ -166,6 +179,16 @@ lvl = prctile(reshape(res_norm,1,numel(res_norm)),99);
 res_bw = im2bw(res_norm,lvl);
 res_bw_closed = imclose(res_bw,strel('disk',50/scale));
 res_noise_removed = bwareaopen(res_bw_closed,100/scale);
+
+%Now to find the eyes in the BF image
+BF_eyesonly = BF(res_bw);
+thresh = mean(BF_eyesonly)*eyeparam;
+BF_bw = im2bw(BF,thresh);
+SE = strel('disk',20);
+BF_bw_closed = imclose(BF_bw,SE);
+SE = strel('disk',8);
+BF_bw_eroded = imerode(BF_bw_closed,SE);
+% figure();imshowpair(BF_im,imcomplement(BF_bw_eroded));colormap gray; axis image;
 
 %Now to analyze and find the centers of the two largest hits
 cc = bwconncomp(res_noise_removed, 4);

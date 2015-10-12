@@ -24,12 +24,12 @@ well_array_pos_mean = nanmean(well_array_pos,2);
     parseControls(fnames, neuroncount, conv, int, pos, 0);
 
 %% Looking at scatterplots
-% 
-% %Plotting the results
-% figure();plot(neuroncount_pos, conv_pos, 'b.', neuroncount_neg, conv_neg, 'r.');
-% title('Positive and Negative Controls, Features Combined');xlabel('Neuron Count');
-% ylabel('Convolution Measure (au)');legend('DMSO', '9mM Mtz', 'Location','Best');
-% 
+
+%Plotting the results
+figure();plot(neuroncount_pos, conv_pos, 'b.', neuroncount_neg, conv_neg, 'r.');
+title('Positive and Negative Controls, Features Combined');xlabel('Neuron Count');
+ylabel('Convolution Measure (au)');legend('DMSO', '9mM Mtz', 'Location','Best');
+
 % %Plotting the results (Position)
 % figure();plot(neuroncount_pos, pos_pos, 'b.', neuroncount_neg, pos_neg, 'r.');
 % title('Positive and Negative Controls, Position Measure');xlabel('Neuron Count');
@@ -39,12 +39,12 @@ well_array_pos_mean = nanmean(well_array_pos,2);
 % figure();plot(neuroncount_pos, int_pos, 'b.', neuroncount_neg, int_neg, 'r.');
 % title('Positive and Negative Controls, Total Intensity');xlabel('Neuron Count');
 % ylabel('Total Intensity (au)');legend('DMSO', '9mM Mtz', 'Location','Best');
-% 
-% %Averaged version
-% figure();plot(neuroncount_pos_avg, conv_pos_avg, 'b.', neuroncount_neg_avg, conv_neg_avg, 'r.');
-% title('Positive and Negative Controls, Features Combined and Averaged');xlabel('Neuron Count');
-% ylabel('Convolution Measure (au)');legend('DMSO', '9mM Mtz', 'Location','Best');
-% 
+
+%Averaged version
+figure();plot(neuroncount_pos_avg, conv_pos_avg, 'b.', neuroncount_neg_avg, conv_neg_avg, 'r.');
+title('Positive and Negative Controls, Features Combined and Averaged');xlabel('Neuron Count');
+ylabel('Convolution Measure (au)');legend('DMSO', '9mM Mtz', 'Location','Best');
+
 % %Averaged Position
 % figure();plot(neuroncount_pos_avg, pos_pos_avg, 'b.', neuroncount_neg_avg, pos_neg_avg, 'r.');
 % title('Positive and Negative Controls, Position Measure Averaged');xlabel('Neuron Count');
@@ -54,19 +54,19 @@ well_array_pos_mean = nanmean(well_array_pos,2);
 % figure();plot(neuroncount_pos_avg, int_pos_avg, 'b.', neuroncount_neg_avg, int_neg_avg, 'r.');
 % title('Positive and Negative Controls, Total Intensity Averaged');xlabel('Neuron Count');
 % ylabel('Total Intensity (au)');legend('DMSO', '9mM Mtz', 'Location','Best');
-% 
-% %% Manhattan Plots
-% 
-% %Looking at differences between neuron counts
-% figure();bar(neuroncount_pos,'FaceColor','b','EdgeColor','w');hold on;bar([zeros(1,length(neuroncount_pos)) neuroncount_neg],'FaceColor','r','EdgeColor','w');
-% title('Positive and Negative Controls, Neuron Counts Only');xlabel('Fish Number');
-% ylabel('Neuron Count');legend('DMSO', '9mM Mtz', 'Location','Best');axis image;
-% 
-% %Now look at difference between the convolutional measure
-% figure();bar(conv_pos,'FaceColor','b','EdgeColor','w');hold on;bar([zeros(1,length(conv_pos)) conv_neg],'FaceColor','r','EdgeColor','w');
-% title('Positive and Negative Controls, Convolutional Measure Only');xlabel('Fish Number');
-% ylabel('Convolutional Measure (au)');legend('DMSO', '9mM Mtz', 'Location','Best');axis image;
-% 
+
+%% Manhattan Plots
+
+%Looking at differences between neuron counts
+figure();bar(neuroncount_pos,'FaceColor','b','EdgeColor','w');hold on;bar([zeros(1,length(neuroncount_pos)) neuroncount_neg],'FaceColor','r','EdgeColor','w');
+title('Positive and Negative Controls, Neuron Counts Only');xlabel('Fish Number');
+ylabel('Neuron Count');legend('DMSO', '9mM Mtz', 'Location','Best');axis image;
+
+%Now look at difference between the convolutional measure
+figure();bar(conv_pos,'FaceColor','b','EdgeColor','w');hold on;bar([zeros(1,length(conv_pos)) conv_neg],'FaceColor','r','EdgeColor','w');
+title('Positive and Negative Controls, Convolutional Measure Only');xlabel('Fish Number');
+ylabel('Convolutional Measure (au)');legend('DMSO', '9mM Mtz', 'Location','Best');axis image;
+
 % %Now look at difference between the total intensity measure
 % figure();bar(int_pos,'FaceColor','b','EdgeColor','w');hold on;bar([zeros(1,length(int_pos)) int_neg],'FaceColor','r','EdgeColor','w');
 % title('Positive and Negative Controls,Total Intensity Only');xlabel('Fish Number');
@@ -76,20 +76,20 @@ well_array_pos_mean = nanmean(well_array_pos,2);
 % figure();bar(pos_pos,'FaceColor','b','EdgeColor','w');hold on;bar([zeros(1,length(pos_pos)) pos_neg],'FaceColor','r','EdgeColor','w');
 % title('Positive and Negative Controls, Position Measure Only');xlabel('Fish Number');
 % ylabel('Position Measure (au)');legend('DMSO', '9mM Mtz', 'Location','Best');axis image;
-% 
-% %And repeating for the averaged version
-% figure();bar(neuroncount_pos_avg,'FaceColor','b','EdgeColor','w');hold on;bar([zeros(1,length(neuroncount_pos_avg)) neuroncount_neg_avg],'FaceColor','r','EdgeColor','w');
-% title('Positive and Negative Controls, Average Neuron Counts Only');xlabel('Fish Number');
-% ylabel('Neuron Count');legend('DMSO', '9mM Mtz', 'Location','Best');axis image;
-% set(gca,'XTick',1:length(neuroncount_pos_avg) + length(neuroncount_neg_avg));
-% set(gca,'XTickLabel',[fnames_pos_avg,fnames_neg_avg]);
-% 
-% figure();bar(conv_pos_avg,'FaceColor','b','EdgeColor','w');hold on;bar([zeros(1,length(conv_pos_avg)) conv_neg_avg],'FaceColor','r','EdgeColor','w');
-% title('Positive and Negative Controls, Average Convolutional Measure Only');xlabel('Fish Number');
-% ylabel('Convolutional Measure (au)');legend('DMSO', '9mM Mtz', 'Location','Best');axis image;
-% set(gca,'XTick',1:length(conv_pos_avg) + length(conv_neg_avg));
-% set(gca,'XTickLabel',[fnames_pos_avg,fnames_neg_avg]);
-% 
+
+%And repeating for the averaged version
+figure();bar(neuroncount_pos_avg,'FaceColor','b','EdgeColor','w');hold on;bar([zeros(1,length(neuroncount_pos_avg)) neuroncount_neg_avg],'FaceColor','r','EdgeColor','w');
+title('Positive and Negative Controls, Average Neuron Counts Only');xlabel('Fish Number');
+ylabel('Neuron Count');legend('DMSO', '9mM Mtz', 'Location','Best');axis image;
+set(gca,'XTick',1:length(neuroncount_pos_avg) + length(neuroncount_neg_avg));
+set(gca,'XTickLabel',[fnames_pos_avg,fnames_neg_avg]);
+
+figure();bar(conv_pos_avg,'FaceColor','b','EdgeColor','w');hold on;bar([zeros(1,length(conv_pos_avg)) conv_neg_avg],'FaceColor','r','EdgeColor','w');
+title('Positive and Negative Controls, Average Convolutional Measure Only');xlabel('Fish Number');
+ylabel('Convolutional Measure (au)');legend('DMSO', '9mM Mtz', 'Location','Best');axis image;
+set(gca,'XTick',1:length(conv_pos_avg) + length(conv_neg_avg));
+set(gca,'XTickLabel',[fnames_pos_avg,fnames_neg_avg]);
+
 % figure();bar(int_pos_avg,'FaceColor','b','EdgeColor','w');hold on;bar([zeros(1,length(int_pos_avg)) int_neg_avg],'FaceColor','r','EdgeColor','w');
 % title('Positive and Negative Controls, Average Total Intensity Only');xlabel('Fish Number');
 % ylabel('Total Intensity (au)');legend('DMSO', '9mM Mtz', 'Location','Best');axis image;
@@ -137,80 +137,13 @@ Z_factor
 positives = [neuroncount_pos' conv_pos' ones(length(conv_pos),1)];
 negatives = [neuroncount_neg' conv_neg' zeros(length(conv_neg),1)];
 figure();SVMStruct = svmtrain([positives(:,1:2); negatives(:,1:2)],[positives(:,3); negatives(:,3)],'ShowPlot','true');
-title('Two Features');xlabel('Neuron Count');ylabel('Convolution Measure');
-
-% %% Grabbing plot data from figure
-% % Get the handle to the classifying line
-% axesHandle = SVMStruct.FigureHandles{1};    % Get the handle to the axes
-% childHandles=get(axesHandle,'children');    % Find the axes' children
-% hggroupHandle=childHandles(1);              % Get HGGROUP object handle that contains the line
-% lineHandle=get(hggroupHandle, 'children');  % Get the line's handle
-% % Get the X and Y data points of the line
-% xvals=get(lineHandle, 'XData');
-% yvals=get(lineHandle, 'YData');
-% % Using 2 points on the line, calculate slope and y-intercept
-% m=(yvals(2)-yvals(1))/(xvals(2)-xvals(1))
-% b=yvals(1)-m*xvals(1)
-% % Plot the y=mx+b line to check it (blue dashed line)
-% % hold on;
-% % plot(xvals, m*xvals+b, '--', 'LineWidth', 3);
-
-% %Code to plot the data in normalized data space
-% featvec = [positives; negatives];
-% featvec(:,1) = (featvec(:,1) +  SVMStruct.ScaleData.shift(1)) .*  SVMStruct.ScaleData.scaleFactor(1);
-% featvec(:,2) = (featvec(:,2) +  SVMStruct.ScaleData.shift(2)) .*  SVMStruct.ScaleData.scaleFactor(2);
-% figure();gscatter(featvec(:,1),featvec(:,2),featvec(:,3), 'rg','+*');
-% 
-% %Code to get w and b (in normalized data space)
-% [w,b] = getSVparam(SVMStruct.SupportVectors, SVMStruct.Alpha);
-% m = -w(1) / w(2); intercept = -b/w(2);
-% x = -2:4; y = m*x + intercept;
-% hold on; plot(x,y,'r');plot(featvec(SVMStruct.SupportVectorIndices,1),featvec(SVMStruct.SupportVectorIndices,2),'ko');
-% 
-% %Rescale support vectors into original data space
-% figure();SVMStruct = svmtrain([positives(:,1:2); negatives(:,1:2)],[positives(:,3); negatives(:,3)],...
-%     'ShowPlot','true','autoscale','false');
-% title('Two Features');
-% temp = [positives; negatives];
-% sv_reg = temp(SVMStruct.SupportVectorIndices,1:2);
-% % sv_reg(:,1) = SVMStruct.SupportVectors(:,1) ./  SVMStruct.ScaleData.scaleFactor(1) - SVMStruct.ScaleData.shift(1);
-% % sv_reg(:,2) = SVMStruct.SupportVectors(:,2) ./  SVMStruct.ScaleData.scaleFactor(2) - SVMStruct.ScaleData.shift(2);
-% 
-% %Now recalculate w and b, in the original data space
-% [w_reg,b_reg] = getSVparam(sv_reg, SVMStruct.Alpha);
-% m_reg = -w_reg(1) / w_reg(2); intercept_reg = -b_reg/w_reg(2);
-% x = 0:35; y = m_reg*x + SVMStruct.Bias;%intercept_reg;
-% hold on; plot(x,y,'r');
+title('Two Features');
 
 %SVM training
 positives = [neuroncount_pos' conv_pos' int_pos' pos_pos' ones(length(conv_pos),1)];
 negatives = [neuroncount_neg' conv_neg' int_neg' pos_neg' zeros(length(conv_neg),1)];
-training_data = [positives(:,1:4); negatives(:,1:4)];
-class_labels = [positives(:,5); negatives(:,5)];
-SVMscore = visualizeSVM(training_data, class_labels, 'SVM Score Results (Raw)');
-
-%Now repeat this for averaged data
-positives_avg = [neuroncount_pos_avg' conv_pos_avg' int_pos_avg' pos_pos_avg' ones(length(conv_pos_avg),1)];
-negatives_avg = [neuroncount_neg_avg' conv_neg_avg' int_neg_avg' pos_neg_avg' zeros(length(conv_neg_avg),1)];
-training_data_avg = [positives_avg(:,1:4); negatives_avg(:,1:4)];
-class_labels_avg = [positives_avg(:,5); negatives_avg(:,5)];
-SVMscore_avg = visualizeSVM(training_data_avg, class_labels_avg, 'SVM Score Results (Averaged)');
-
-SVM_pos = SVMscore(1:length(positives));
-SVM_neg = SVMscore(length(positives)+1:end);
-sigma_pos = std(SVM_pos); sigma_neg = std(SVM_neg);
-mu_pos = mean(SVM_pos); mu_neg = mean(SVM_neg);
-Z_factor = 1 - 3*(sigma_pos + sigma_neg) / abs(mu_pos - mu_neg);
-'The Z-factor calculated from the SVM metascore is: '
-Z_factor
-
-SVM_pos_avg = SVMscore_avg(1:length(positives_avg));
-SVM_neg_avg = SVMscore_avg(length(positives_avg)+1:end);
-sigma_pos = nanstd(SVM_pos_avg); sigma_neg = nanstd(SVM_neg_avg);
-mu_pos = nanmean(SVM_pos_avg); mu_neg = nanmean(SVM_neg_avg);
-Z_factor = 1 - 3*(sigma_pos + sigma_neg) / abs(mu_pos - mu_neg);
-'The Z-factor calculated from the SVM metascore (averaged) is: '
-Z_factor
+figure();SVMStruct = svmtrain([positives(:,1:4); negatives(:,1:4)],[positives(:,5); negatives(:,5)]);
+title('Four Features');
 
 % neuroncount_pos_norm = neuroncount_pos ./ std(neuroncount_pos);
 % neuroncount_neg_norm = neuroncount_neg ./ std(neuroncount_neg);
@@ -228,45 +161,6 @@ Z_factor
 % ylabel('Summed Features (a.u.)');legend('DMSO', '9mM Mtz', 'Location','Best');
 
 %% Useful functions
-
-function res = visualizeSVM(training_data, class_labels,plot_title)
-%This function will take in training data, train an SVM. It will then find
-%the weight vector returned to recalculate a SVM score for each data point
-%and return a plot of the results with the decision line marked.
-SVMStruct = svmtrain(training_data, class_labels);
-[w,b] = getSVparam(SVMStruct.SupportVectors, SVMStruct.Alpha);
-
-%Now to visualize what the SVM is doing...
-featvec = training_data;
-for i = 1:size(featvec,2)
-    featvec(:,i) = (featvec(:,i) + SVMStruct.ScaleData.shift(i)) .* SVMStruct.ScaleData.scaleFactor(i);
-end
-res = w*featvec';
-figure();gscatter(1:length(res),res,class_labels,'gr','..',10);
-legend('DMSO','Mtz','Location','Best')
-xlabel('Observation Number');
-ylabel('SVM Score');
-title(plot_title);
-hold on;plot([1 250],[SVMStruct.Bias SVMStruct.Bias],'k:');
-
-
-function [w,b] = getSVparam(supportVectors, alpha)
-%This function will take in a collection of support vectors and return the
-%w (vector containing the weights that each input into the SVM contributes)
-%and b (the bias) for the classification equation sign(w*x + b) where x is
-%the vector of data inputs.
-W = supportVectors;
-for i = 1:size(W,2)
-    W(:,i) = W(:,i) .* alpha;
-end
-w = sum(W);
-pos = supportVectors(alpha > 0,:);
-neg = supportVectors(alpha < 0,:);
-pos_mean = mean(w*pos'); neg_mean = mean(w*neg');
-%Calculation of b
-b = -0.5 * (pos_mean + neg_mean);
-
-
 function [fnames_pos, neuroncount_pos, conv_pos, int_pos, pos_pos, ...
     fnames_neg, neuroncount_neg, conv_neg, int_neg, pos_neg] = ...
     parseControls(fnames, neuroncount, conv, int, pos, option)
