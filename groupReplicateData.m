@@ -4,7 +4,8 @@ function [res, wellname_array] = groupReplicateData(data)
 %which each member of the array represents one measurement. This will
 %return an x*y by z array (2D array) where rows represent a unique
 %observation and columns represent replicates. Note this is usually a 96 x
-%N array since we generally use 96-well plates.
+%N array since we generally use 96-well plates. NOTE: THIS WILL GROUP BY
+%COLUMNS THEN ROWS
 
 well_letter = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
 well_number = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'};

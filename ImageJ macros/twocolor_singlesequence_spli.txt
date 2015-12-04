@@ -1,0 +1,5 @@
+title = getTitle();
+run("Grouped Z Project", 21);
+selectWindow("C1-" + title);
+title_c1 = getTitle();
+run("Z Project...", "projection=[Max Intensity]");

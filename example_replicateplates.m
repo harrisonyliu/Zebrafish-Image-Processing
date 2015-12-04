@@ -2,13 +2,14 @@
 %Excel file with raw data, to an 96xN array where rows represent individual
 %wells and the Nth column is the replicates
 
-filename = 'C:\Users\harri_000\20150911MassValidation\20150911MassValidationImage.csv';
+% filename = 'C:\Users\harri_000\20150911MassValidation\20150911MassValidationImage.csv';
+filename = 'C:\Users\harri_000\20151009_validation_4.5mM\20151009_validation_4.5mMImage.csv';
 plate_struct = separateReplicatePlates(filename,'Count_Neurons_inner','ghettoconv','TotalIntensity_inner','position_measure');
 features = fieldnames(plate_struct);
-%Go through each feature and group replicate data together
-for i = 1:length(features)
-    eval(['[grouped_data.' features{i} ', grouped_data.wellname] = groupReplicateData(plate_struct.' features{i} ');']);
-end
+% %Go through each feature and group replicate data together
+% for i = 1:length(features)
+%     eval(['[grouped_data.' features{i} ', grouped_data.wellname] = groupReplicateData(plate_struct.' features{i} ');']);
+% end
 
 %% This section is specific for the data from 2015.09.11
 
@@ -28,19 +29,23 @@ for idx = 1:length(features)
     eval(['temp_data = plate_struct.' features{idx} ';']);
     array_a = cell(1,numel(temp_data));
     array_b = array_a;
-    pos_controls = zeros(6,numel(temp_data));
+    pos_controls = zeros(8,numel(temp_data));
     neg_controls = zeros(8,numel(temp_data));
     for i = 1:numel(temp_data)
         temp_array = temp_data{i};
         %First let's deal with the control data
-        pos_controls(:,i) = temp_array(1:6,1);
-        wellname_array_input = wellname_array(1:6,1);
+        pos_controls(:,i) = temp_array(:,1);
+        wellname_array_input = wellname_array(:,1);
         neg_controls(:,i) = temp_array(:,12);
         wellname_array_input = {wellname_array_input{:} wellname_array{:,12}};
         %Now we split the acquired data in half and rotate the right half
         %by 180 degrees
         array_a{i} = temp_array(:,2:6);
-        wellname_array_input = {wellname_array_input{:} wellname_array{:,2:6}};
+        for row = 1:8
+            for col = 2:6
+                wellname_array_input = {wellname_array_input{:} wellname_array{row, col}};
+            end
+        end
         array_b_temp = temp_array(:,7:11);
         array_b{i} = rot90(rot90(array_b_temp));
     end
@@ -60,7 +65,8 @@ for idx = 1:length(features)
     eval(['finaldata_names.' features{idx} ' = wellname_array_input;']);
     [res, ~] = groupReplicateData(final_array);
     createManhattanPlot(pos_controls, neg_controls, res, wellname_array_input, ['Validation 2015.09.11 ' features{idx}],0);
-%     xticklabel_rotate;
+    eval(['bardata.' features{idx} ' = res;']);
+    %     xticklabel_rotate;
 end
 
 %Now let's create the meta-score (SVM)
@@ -110,4 +116,13 @@ pos_controls = temp_result_pos;
 neg_controls = temp_result_neg;
     
 [res, ~] = groupReplicateData(SVM_score);
+pos_controls = -pos_controls; neg_controls = -neg_controls; res = -res;
+bias = min(min(neg_controls));
+pos_controls = pos_controls - bias; neg_controls = neg_controls - bias;
+res = res - bias;
+bardata.metascore = res;
 createManhattanPlot(pos_controls, neg_controls, res, wellname_array_input, ['Validation 2015.09.11 ' features{idx}],1);
+x_lim = get(gca, 'xlim');
+axis([x_lim 0 25]);
+cutoff = nanmean(reshape(neg_controls,1,numel(neg_controls))) + 3 * nanstd(reshape(neg_controls,1,numel(neg_controls)));
+hold on;plot([0 x_lim(2)],[cutoff cutoff], 'r--');hold off;

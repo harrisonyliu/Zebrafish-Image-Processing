@@ -18,13 +18,17 @@ for i = 1:numel(features)
         bar_std(j) = nanstd(temp_data_reshaped);
         %Find out how many observations there were
         num_obsv = numel(temp_data_reshaped) - sum(isnan(temp_data_reshaped));
+        y_amt = bar_data(2) + 3 * bar_std(2);
     end
-    CI = bar_data - 1.96 * (bar_std ./ sqrt(num_obsv));
+    %     CI = bar_data - 1.96 * (bar_std ./ sqrt(num_obsv));
+    CI = bar_std;
     figure();bar(bar_data,'g','EdgeColor','w');hold on;
     title(features{i});
     set(gca,'XTickLabel',groups)
     xticklabel_rotate;
     errorbar(1:numel(groups),bar_data,CI,'.');
+%     hold on;plot([1 numel(bar_data)],[y_amt y_amt],'r--');
+%     hold off;
 end
 
 end

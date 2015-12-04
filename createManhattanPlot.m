@@ -12,7 +12,7 @@ end
 figure();hold on;title([chart_title ' Manhattan Plot']);
 ylabel('Convolutional Measure');xlabel('Observation');
 %First plot the positive controls
-placeholder = [];color = 'ymcbwk';coloridx = 1;
+placeholder = [];color = 'ymcbk';coloridx = 1;
 
 for i = 1:size(positive_ctrls,1)
     bar([placeholder positive_ctrls(i,:)],'g', 'EdgeColor','w');
@@ -39,15 +39,17 @@ end
 negative_mean = nanmean(negative_ctrls,2);
 negative_std = nanstd(negative_mean);
 cutoff = nanmean(negative_mean) + 3*negative_std;
-plot([0 length(placeholder)],[cutoff cutoff], 'r--');hold off;
+% plot([0 length(placeholder)],[cutoff cutoff], 'r--');hold off;
 
 %Now add well labels
 well_labels = wellname_array;
 if option == 1
     set(gca,'XTick',1:length(placeholder));
+    set(gca,'XTickLabel',well_labels);
     xticklabel_rotate;
 else
     set(gca,'XTick',3:6:length(placeholder)-1);
+    set(gca,'XTickLabel',well_labels);
 end
 % set(gca,'XTick',1:length(placeholder));
-set(gca,'XTickLabel',well_labels);
+% set(gca,'XTickLabel',well_labels);
