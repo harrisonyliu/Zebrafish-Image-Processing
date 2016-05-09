@@ -1,12 +1,10 @@
 close all
 clear all
-
-filename = fullfile('C:\Users\harri_000\20151123Nurr1','20151123Nurr1Image.csv');
+filename = fullfile('C:\Users\harri_000\20160201_knowncmpds','20160201_knowncmpdsImage.csv');
 
 %First rip all the relevant data from the excel file for each features
 % plate_struct = separateReplicatePlates(filename,'Count_Neurons',...
 %     'ghettoconv','TotalIntensity_inner','position_measure');
-
 plate_struct = separateReplicatePlates(filename,'Count_Neurons',...
     'ghettoconv','TotalIntensity_inner','position_measure',...
     'Intensity_TotalIntensity_eyes_removed_cropped_Neurons',...
@@ -17,11 +15,18 @@ plate_struct = separateReplicatePlates(filename,'Count_Neurons',...
 % plate_struct.metascore = calc_metascore(w,plate_struct,[],[]);
 
 %Next tell the computer which wells should be grouped together
-platemap.posctrl = createWellGroups('A', 'A', 1, 12);
-platemap.negctrl = createWellGroups('B', 'B', 1, 12);
-platemap.San = createWellGroups('C', 'C', 1, 12);
-platemap.Amo = createWellGroups('D', 'D', 1, 12);
-platemap.DHI = createWellGroups('E', 'E', 1, 12);
+platemap.posctrl = createWellGroups('A', 'H', 1, 1);
+platemap.ninemtz = createWellGroups('A', 'H', 11, 11);
+platemap.fourfivemtz = createWellGroups('A', 'H', 12, 12);
+platemap.fiveBAX = createWellGroups('A', 'H', 2, 2);
+platemap.twofiveBAX = createWellGroups('A', 'H', 3, 3);
+platemap.oneBAX = createWellGroups('A', 'H', 4, 4);
+platemap.tenPIF = createWellGroups('A', 'H', 5, 5);
+platemap.fivePIF = createWellGroups('A', 'H', 6, 6);
+platemap.onePIF = createWellGroups('A', 'H', 7, 7);
+platemap.fivehundredUCF = createWellGroups('A', 'H', 8, 8);
+platemap.twofiftyUCF = createWellGroups('A', 'H', 9, 9);
+platemap.onehundredUCF = createWellGroups('A', 'H', 10, 10);
 
 %Now group the data together for each condition and each feature
 features = fieldnames(plate_struct);
@@ -61,12 +66,12 @@ createManhattan_grouped(aggregateData)
 %     errorbar(1:numel(groups),bar_data,CI,'.');
 % end
 
-%Now let's do the same as above, but let's plot each individual well data
-%out
+% %Now let's do the same as above, but let's plot each individual well data
+% %out
 % features = fieldnames(aggregateData);
 % groups = fieldnames(eval(['aggregateData.' features{1}]));
 % for i = 1:numel(features)
-%     placeholder = [];color = 'gymcbkr';colorIdx = 1;
+%     placeholder = [];color = 'grmcbky';colorIdx = 1;
 %     figure();hold on;title(features{i});
 %     bar_data = [];
 %     for j = 1:numel(groups)

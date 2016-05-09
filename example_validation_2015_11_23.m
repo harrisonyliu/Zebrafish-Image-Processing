@@ -27,8 +27,8 @@ platemap.cmp5 = createWellGroups('A', 'H', 6, 6);
 platemap.cmp6 = createWellGroups('A', 'H', 7, 7);
 platemap.cmp7 = createWellGroups('A', 'H', 8, 8);
 platemap.cmp8 = createWellGroups('A', 'H', 9, 9);
-platemap.cou = createWellGroups('A', 'H', 10, 10);
-platemap.nac = createWellGroups('A', 'H', 11, 11);
+% platemap.cou = createWellGroups('A', 'H', 10, 10);
+% platemap.nac = createWellGroups('A', 'H', 11, 11);
 
 %Now group the data together for each condition and each feature
 features = fieldnames(plate_struct);

@@ -1,11 +1,15 @@
 close all
 clear all
 
-filename = fullfile('C:\Users\harri_000\20151112DPF5zfactor','20151112DPF5zfactorImage.csv');
+filename = fullfile('C:\Users\harri_000\20160203_zfactor_preselected_newavg','20160203_zfactor_preselected_newavgImage.csv');
 
 %First rip all the relevant data from the excel file for each features
-plate_struct = separateReplicatePlates(filename,'Count_Neurons_inner',...
-    'ghettoconv','TotalIntensity_inner','position_measure','Intensity_TotalIntensity_filtered_img');
+plate_struct = separateReplicatePlates(filename,'Count_Neurons',...
+    'Intensity_TotalIntensity_ghettoconv','Intensity_TotalIntensity_inverted_conv',...
+    'TotalIntensity_inner','Intensity_TotalIntensity_position_measure',...
+    'Intensity_TotalIntensity_eyes_removed_cropped_Neurons',...
+    'Mean_Neurons_Intensity_MedianIntensity_inner_brain',...
+    'Correlation_Correlation_eyes_removed_cropped_avg_brain');
 
 %Now create the metascore that combines all four features together
 % w = [0.3425, -1.1846, -0.4643, -0.9152]; %Weight vectors from the SVM training
@@ -25,6 +29,9 @@ for i = 1:numel(features)
         eval(['[' struct_name ',' struct_wellname '] = groupWells(platemap.' groups{j} ', plate_struct.' features{i} ');']);
     end
 end
+
+aggregateData.strict.posctrl = aggregateData.Intensity_TotalIntensity_ghettoconv.posctrl - aggregateData.Intensity_TotalIntensity_inverted_conv.posctrl;
+aggregateData.strict.negctrl = aggregateData.Intensity_TotalIntensity_ghettoconv.negctrl - aggregateData.Intensity_TotalIntensity_inverted_conv.negctrl;
 
 %Now let's create a Manhattan plot for every feature with the appropriate
 %groupings!

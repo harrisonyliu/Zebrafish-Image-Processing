@@ -1,27 +1,25 @@
 close all
 clear all
 
-filename = fullfile('C:\Users\harri_000\20151123Nurr1','20151123Nurr1Image.csv');
+filename = fullfile('C:\Users\harri_000\20160308_acutecmpd7','20160308_acutecmpd7Image.csv');
 
 %First rip all the relevant data from the excel file for each features
-% plate_struct = separateReplicatePlates(filename,'Count_Neurons',...
-%     'ghettoconv','TotalIntensity_inner','position_measure');
-
 plate_struct = separateReplicatePlates(filename,'Count_Neurons',...
-    'ghettoconv','TotalIntensity_inner','position_measure',...
+    'Intensity_TotalIntensity_ghettoconv','Intensity_TotalIntensity_inverted_conv',...
+    'TotalIntensity_inner','Intensity_TotalIntensity_position_measure',...
     'Intensity_TotalIntensity_eyes_removed_cropped_Neurons',...
-    'Mean_Neurons_Intensity_MedianIntensity_inner_brain');
+    'Mean_Neurons_Intensity_MedianIntensity_inner_brain',...
+    'Correlation_Correlation_eyes_removed_cropped_avg_brain');
 
 %Now create the metascore that combines all four features together
 % w = [0.3425, -1.1846, -0.4643, -0.9152]; %Weight vectors from the SVM training
 % plate_struct.metascore = calc_metascore(w,plate_struct,[],[]);
 
 %Next tell the computer which wells should be grouped together
-platemap.posctrl = createWellGroups('A', 'A', 1, 12);
-platemap.negctrl = createWellGroups('B', 'B', 1, 12);
-platemap.San = createWellGroups('C', 'C', 1, 12);
-platemap.Amo = createWellGroups('D', 'D', 1, 12);
-platemap.DHI = createWellGroups('E', 'E', 1, 12);
+platemap.posctrl = createWellGroups('A', 'B', 1, 12);
+platemap.negctrl = createWellGroups('C', 'D', 1, 12);
+platemap.warfarin = createWellGroups('E', 'F', 1, 12);
+platemap.cmpd7 = createWellGroups('G', 'H', 1, 12);
 
 %Now group the data together for each condition and each feature
 features = fieldnames(plate_struct);
@@ -34,10 +32,22 @@ for i = 1:numel(features)
     end
 end
 
+aggregateData.strict.posctrl = aggregateData.Intensity_TotalIntensity_ghettoconv.posctrl - aggregateData.Intensity_TotalIntensity_inverted_conv.posctrl;
+aggregateData.strict.negctrl = aggregateData.Intensity_TotalIntensity_ghettoconv.negctrl - aggregateData.Intensity_TotalIntensity_inverted_conv.negctrl;
+
 %Now let's create a Manhattan plot for every feature with the appropriate
 %groupings!
 
 createManhattan_grouped(aggregateData)
+
+for i = 1:numel(features)
+        eval(['mean_pos = nanmean(aggregateData.' features{i} '.' groups{1} ');'])
+        eval(['mean_neg = nanmean(aggregateData.' features{i} '.' groups{2} ');'])
+        eval(['std_pos = nanstd(aggregateData.' features{i} '.' groups{1} ');'])
+        eval(['std_neg = nanstd(aggregateData.' features{i} '.' groups{2} ');'])
+        zfactor = 1 - 3*(std_pos + std_neg) / (abs(mean_pos - mean_neg));
+        [features{i} ' = ' num2str(zfactor)]
+end
 
 % features = fieldnames(aggregateData);
 % groups = fieldnames(eval(['aggregateData.' features{1}]));
@@ -61,8 +71,8 @@ createManhattan_grouped(aggregateData)
 %     errorbar(1:numel(groups),bar_data,CI,'.');
 % end
 
-%Now let's do the same as above, but let's plot each individual well data
-%out
+% %Now let's do the same as above, but let's plot each individual well data
+% %out
 % features = fieldnames(aggregateData);
 % groups = fieldnames(eval(['aggregateData.' features{1}]));
 % for i = 1:numel(features)

@@ -1,12 +1,10 @@
 close all
 clear all
-
-filename = fullfile('C:\Users\harri_000\20151123Nurr1','20151123Nurr1Image.csv');
+filename = fullfile('C:\Users\harri_000\20151207cmpd7doseresponse','20151207cmpd7doseresponseImage.csv');
 
 %First rip all the relevant data from the excel file for each features
 % plate_struct = separateReplicatePlates(filename,'Count_Neurons',...
 %     'ghettoconv','TotalIntensity_inner','position_measure');
-
 plate_struct = separateReplicatePlates(filename,'Count_Neurons',...
     'ghettoconv','TotalIntensity_inner','position_measure',...
     'Intensity_TotalIntensity_eyes_removed_cropped_Neurons',...
@@ -19,9 +17,12 @@ plate_struct = separateReplicatePlates(filename,'Count_Neurons',...
 %Next tell the computer which wells should be grouped together
 platemap.posctrl = createWellGroups('A', 'A', 1, 12);
 platemap.negctrl = createWellGroups('B', 'B', 1, 12);
-platemap.San = createWellGroups('C', 'C', 1, 12);
-platemap.Amo = createWellGroups('D', 'D', 1, 12);
-platemap.DHI = createWellGroups('E', 'E', 1, 12);
+platemap.first = createWellGroups('C', 'C', 1, 12);
+platemap.second = createWellGroups('D', 'D', 1, 12);
+platemap.third = createWellGroups('E', 'E', 1, 12);
+platemap.fourth = createWellGroups('F', 'F', 1, 12);
+platemap.fifth = createWellGroups('G', 'G', 1, 12);
+platemap.sixth = createWellGroups('H', 'H', 1, 12);
 
 %Now group the data together for each condition and each feature
 features = fieldnames(plate_struct);
@@ -61,12 +62,12 @@ createManhattan_grouped(aggregateData)
 %     errorbar(1:numel(groups),bar_data,CI,'.');
 % end
 
-%Now let's do the same as above, but let's plot each individual well data
-%out
+% %Now let's do the same as above, but let's plot each individual well data
+% %out
 % features = fieldnames(aggregateData);
 % groups = fieldnames(eval(['aggregateData.' features{1}]));
 % for i = 1:numel(features)
-%     placeholder = [];color = 'gymcbkr';colorIdx = 1;
+%     placeholder = [];color = 'grmcbky';colorIdx = 1;
 %     figure();hold on;title(features{i});
 %     bar_data = [];
 %     for j = 1:numel(groups)

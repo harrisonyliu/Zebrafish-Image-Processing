@@ -36,8 +36,8 @@ try
     final_crop = rotate_im(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4));
     final_crop_BF = rotate_im_BF(res.crop2(1):res.crop2(2),res.crop2(3):res.crop2(4));
     fig = figure; imshowpair(final_crop(:,:),imcomplement(eyes));colormap gray; axis image;axis off;title(well_name);
-    hold on;plot(res.eye1(1),res.eye1(2),'r*');plot(res.eye2(1),res.eye2(2),'r*');plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-');
-    plot(res.neuron(1),res.neuron(2),'go');plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-');hold off;
+    hold on;plot(res.eye1(1),res.eye1(2),'r*','MarkerSize',10,'LineWidth',2);plot(res.eye2(1),res.eye2(2),'r*','MarkerSize',10,'LineWidth',2);plot([res.eye1(1) res.eye2(1)],[res.eye1(2) res.eye2(2)],'r-','LineWidth',2);
+    plot(res.neuron(1),res.neuron(2),'go','LineWidth',2);plot([res.midpt(1) res.neuron(1)],[res.midpt(2) res.neuron(2)],'g-','LineWidth',2);hold off;
     z_proj = crop_brain_area(res.neuron(1),res.neuron(2),final_crop);
 %         figure();imagesc(z_proj);colormap gray; axis image;axis off;
     z_proj_filtered = filter_neuron(z_proj);

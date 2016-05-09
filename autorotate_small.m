@@ -25,6 +25,7 @@ im_noiseRemoved_2(cc.PixelIdxList{max_idx}) = 1;
 
 SE = strel('disk',50/scale);
 im_closed = imclose(im_noiseRemoved_2,SE);
+% figure();imagesc(im_closed);colormap gray; axis image;
 
 %PCA Analysis
 im_reshape = reshape(im_closed,numel(im_closed),1);
@@ -192,16 +193,16 @@ BF_bw_eroded = imerode(BF_bw_closed,SE);
 
 %Now to analyze and find the centers of the two largest hits
 cc = bwconncomp(res_noise_removed, 4);
-% centroids = regionprops(cc,'centroid','area');
-% while numel(centroids) > 2
-%     area = [centroids.Area];
-%     min_idx = find(area == min(area));
-%     centroids(min_idx) = [];
-% end
+centroids = regionprops(cc,'centroid','area');
+while numel(centroids) > 2
+    area = [centroids.Area];
+    min_idx = find(area == min(area));
+    centroids(min_idx) = [];
+end
 % 
-% %Plotting
+%Plotting
 % figure();imagesc(BF_im);colormap gray;axis image;
-% % figure();imagesc(res);axis image;
+% figure();imagesc(res);axis image;
 % figure();imagesc(res_bw);axis image;
 % % figure();imagesc(res_bw_closed);axis image;
 % figure();imagesc(res_noise_removed);colormap gray;axis off;axis image;
@@ -209,7 +210,7 @@ cc = bwconncomp(res_noise_removed, 4);
 % y1 = centroids(1).Centroid(2);y2 = centroids(2).Centroid(2); 
 % hold on;plot(x1,y1,'r*');plot(x2,y2,'r*');hold off;
 % figure();imshowpair(BF_im,res_noise_removed);
-% hold on;plot(x1,y1,'b*');plot(x2,y2,'b*');hold off;
+% hold on;plot(x1,y1,'b*','MarkerSize',10,'LineWidth',2);plot(x2,y2,'b*','MarkerSize',10,'LineWidth',2);hold off;
 end
 
 function centroids = twoEyes(centroids)

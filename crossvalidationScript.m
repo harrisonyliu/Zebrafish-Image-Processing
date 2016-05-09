@@ -29,4 +29,4 @@ cp.CorrectRate
 
 %# get confusion matrix
 %# columns:actual, rows:predicted, last-row: unclassified instances
-cp.CountingMatrix
+% cp.CountingMatrix

@@ -1,16 +1,15 @@
 close all
 clear all
 
-filename = fullfile('C:\Users\harri_000\20151123Nurr1','20151123Nurr1Image.csv');
+filename = fullfile('C:\Users\harri_000\20151123_Nurr1_reanalyze','20151123_Nurr1_reanalyzeImage.csv');
 
 %First rip all the relevant data from the excel file for each features
-% plate_struct = separateReplicatePlates(filename,'Count_Neurons',...
-%     'ghettoconv','TotalIntensity_inner','position_measure');
-
 plate_struct = separateReplicatePlates(filename,'Count_Neurons',...
-    'ghettoconv','TotalIntensity_inner','position_measure',...
+    'Intensity_TotalIntensity_ghettoconv','Intensity_TotalIntensity_inverted_conv',...
+    'TotalIntensity_inner','Intensity_TotalIntensity_position_measure',...
     'Intensity_TotalIntensity_eyes_removed_cropped_Neurons',...
-    'Mean_Neurons_Intensity_MedianIntensity_inner_brain');
+    'Mean_Neurons_Intensity_MedianIntensity_inner_brain',...
+    'Correlation_Correlation_eyes_removed_cropped_avg_brain');
 
 %Now create the metascore that combines all four features together
 % w = [0.3425, -1.1846, -0.4643, -0.9152]; %Weight vectors from the SVM training
@@ -34,10 +33,22 @@ for i = 1:numel(features)
     end
 end
 
+aggregateData.strict.posctrl = aggregateData.Intensity_TotalIntensity_ghettoconv.posctrl - aggregateData.Intensity_TotalIntensity_inverted_conv.posctrl;
+aggregateData.strict.negctrl = aggregateData.Intensity_TotalIntensity_ghettoconv.negctrl - aggregateData.Intensity_TotalIntensity_inverted_conv.negctrl;
+
 %Now let's create a Manhattan plot for every feature with the appropriate
 %groupings!
 
 createManhattan_grouped(aggregateData)
+
+% for i = 1:numel(features)
+%         eval(['mean_pos = nanmean(aggregateData.' features{i} '.' groups{1} ');'])
+%         eval(['mean_neg = nanmean(aggregateData.' features{i} '.' groups{2} ');'])
+%         eval(['std_pos = nanstd(aggregateData.' features{i} '.' groups{1} ');'])
+%         eval(['std_neg = nanstd(aggregateData.' features{i} '.' groups{2} ');'])
+%         zfactor = 1 - 3*(std_pos + std_neg) / (abs(mean_pos - mean_neg));
+%         [features{i} ' = ' num2str(zfactor)]
+% end
 
 % features = fieldnames(aggregateData);
 % groups = fieldnames(eval(['aggregateData.' features{1}]));
@@ -63,27 +74,27 @@ createManhattan_grouped(aggregateData)
 
 %Now let's do the same as above, but let's plot each individual well data
 %out
-% features = fieldnames(aggregateData);
-% groups = fieldnames(eval(['aggregateData.' features{1}]));
-% for i = 1:numel(features)
-%     placeholder = [];color = 'gymcbkr';colorIdx = 1;
-%     figure();hold on;title(features{i});
-%     bar_data = [];
-%     for j = 1:numel(groups)
-%         data_str = ['aggregateData.' features{i} '.' groups{j}];
-%         temp_data = eval(['reshape(' data_str ''',[1,numel(' data_str ')]);']);
-%         bar([placeholder, temp_data],color(colorIdx), 'EdgeColor','w');
-%         placeholder = [placeholder, zeros(1,length(temp_data))];
-%         
-%         if colorIdx == length(color)
-%             colorIdx = 1;
-%         else
-%             colorIdx = colorIdx + 1;
-%         end
-%     end
-%     cutoff = round(numel(groups)/2);
-%     axis normal;legend(groups,'Location', 'southoutside','Orientation','horizontal','fontsize',10);
-% %     figure();bar(bar_data);
-% %     set(gca,'XTickLabel',groups)
-% %     xticklabel_rotate;
-% end
+features = fieldnames(aggregateData);
+groups = fieldnames(eval(['aggregateData.' features{1}]));
+for i = 1:numel(features)
+    placeholder = [];color = 'gymcbkr';colorIdx = 1;
+    figure();hold on;title(features{i});
+    bar_data = [];
+    for j = 1:numel(groups)
+        data_str = ['aggregateData.' features{i} '.' groups{j}];
+        temp_data = eval(['reshape(' data_str ''',[1,numel(' data_str ')]);']);
+        bar([placeholder, temp_data],color(colorIdx), 'EdgeColor','w');
+        placeholder = [placeholder, zeros(1,length(temp_data))];
+        
+        if colorIdx == length(color)
+            colorIdx = 1;
+        else
+            colorIdx = colorIdx + 1;
+        end
+    end
+    cutoff = round(numel(groups)/2);
+    axis normal;legend(groups,'Location', 'southoutside','Orientation','horizontal','fontsize',10);
+%     figure();bar(bar_data);
+%     set(gca,'XTickLabel',groups)
+%     xticklabel_rotate;
+end
