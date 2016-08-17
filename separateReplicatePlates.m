@@ -26,10 +26,18 @@ idx = 1; %To keep track of what plate we are currently on
 features = fieldnames(plate_data_raw);
 for i = 1:length(unique_dates)
     for j = 1:length(unique_plates)
-        for k = 2:length(features)
-            eval(['plate_' features{k} '{idx} = assign_plate_data(unique_dates{i},unique_plates{j},plate_data_raw.fnames,plate_data_raw.' features{k} ');']);
+        %We need to make sure bad combinations of dates and plates are not
+        %accidentally processed, so here we make a sanity check to ensure
+        %that this plate and date combination even exists
+        temp_date = unique_dates{i}; temp_date_idx = strcmp(temp_date,date_list);
+        corresponding_plate = plate_list(temp_date_idx); %These are the plates corresponding to that date, we wish to check to see if the current plate exists!
+        corr_plate_idx = strcmp(unique_plates{j},corresponding_plate);
+        if sum(corr_plate_idx) > 0
+            for k = 2:length(features)
+                eval(['plate_' features{k} '{idx} = assign_plate_data(unique_dates{i},unique_plates{j},plate_data_raw.fnames,plate_data_raw.' features{k} ');']);
+            end
+            idx = idx + 1;
         end
-        idx = idx + 1;
     end
 end
 

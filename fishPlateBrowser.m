@@ -22,7 +22,7 @@ function varargout = fishPlateBrowser(varargin)
 
 % Edit the above text to modify the response to help fishPlateBrowser
 
-% Last Modified by GUIDE v2.5 23-Sep-2015 17:03:39
+% Last Modified by GUIDE v2.5 20-Jul-2016 11:38:10
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -60,6 +60,7 @@ handles.pose_Array.wellname = cell(8,12); %Keeps track of the wellnames
 handles.pose_Array.success = nan(8,12); %Keeps track of whether the automatic brain ID was successful
 handles.pose_Array.meta_pose = cell(8,12); %Keeps track if fish is dead/empty well, or if no good poses were located
 handles.pose_Array.poseNum = cell(8,12); %Keeps track of which of the five poses were used
+handles.FileConvention = 0;
 % Update handles structure
 guidata(hObject, handles);
 
@@ -113,6 +114,21 @@ end
         path_minus_pose = get(handles.edit1,'String');
         pose_names = handles.folder_names(3:end);
         wellName = get(hObject,'String');
+        if handles.FileConvention == 1
+            temp_idx = strfind(wellName,'-');
+            numStr = wellName(temp_idx+2:end);
+            if strcmp(numStr,'1(') == 1
+                numStr = '1';
+            end
+            if str2num(numStr) < 10
+                numStr = ['0' numStr];
+            end
+            if strcmp(numStr,'01') == 1
+                numStr = [numStr '('];
+            end
+            wellName = [wellName(1:temp_idx + 1) numStr];
+        end
+                
         set(hObject,'ForegroundColor','green');
         button_name = get(hObject,'Tag');
         button_num = str2num(button_name(11:end));
@@ -1186,3 +1202,17 @@ function edit2_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in checkbox1.
+function checkbox1_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if get(hObject,'Value') == 1
+    handles.FileConvention = 1;
+else
+    handles.FileConvention = 0 ;
+end
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+guidata(hObject, handles);

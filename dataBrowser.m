@@ -61,8 +61,8 @@ handles.countCutoff = 10;
 handles.convCutoff = 0.13;
 hold on;plot([0, 45], [handles.convCutoff handles.convCutoff],'m--');plot([handles.countCutoff handles.countCutoff],[0 2],'m--');
 axis([0,20,0,0.2]);
-handles.cell_profiler_dir = 'Z:\Harrison\Zebrafish Screening Data\CellProfiler_Results';
-handles.hit_list_dir = 'Z:\Harrison\Zebrafish Screening Data\Hit_list';
+handles.cell_profiler_dir = 'F:\CellProfiler Output';
+handles.hit_list_dir = 'F:\CellProfiler Output';
 handles.folder_names = dir(handles.cell_profiler_dir);
 handles.image_folder = fullfile(handles.cell_profiler_dir,'Images');
 
