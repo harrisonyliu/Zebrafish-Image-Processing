@@ -6,7 +6,7 @@ clear all
 % filename = fullfile('F:\CellProfiler Output\2016.06.29 Screen Round 2 5052SBQ3','5052SBQ3Image.csv');
 filename = fullfile('F:\CellProfiler Output\2016.08.16 5054SBQ3','2016.08.16 5054SBQ3Image.csv');
 % filename = fullfile('F:\CellProfiler Output\2016.06.29 Screen Round 2 5053SBQ1','5053SBQ1Image.csv');
-
+plateQuadrant = '5054SBQ3';
 
 %First rip all the relevant data from the excel file for each features
 plate_struct = separateReplicatePlates(filename,'Count_Neurons',...
@@ -52,6 +52,11 @@ end
 %groupings!
 
 createManhattan_grouped_forscreens(aggregateData)
+title([plateQuadrant ', Brain Health Score (non-log normalized)']);
+
+%This section is just for sanity checking our SSMD calculations
+datablock = calcSSMD(aggregateData,'Intensity_TotalIntensity_ghettoconv',plateQuadrant);
+addToDatabase(datablock); %Here we add the data to the master list
 
 % for i = 1:numel(features)
 %         eval(['mean_pos = nanmean(aggregateData.' features{i} '.' groups{1} ');'])

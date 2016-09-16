@@ -1,7 +1,7 @@
 close all
 clear all
 
-filename = fullfile('C:\Users\harri_000\20151207NACdoseresponse','20160105Zfactor5dpf_onlysuperbrightsImage.csv');
+filename = fullfile('F:\CellProfiler Output\20151207NACdoseresponse','20160105Zfactor5dpf_onlysuperbrightsImage.csv');
 
 %First rip all the relevant data from the excel file for each features
 plate_struct = separateReplicatePlates(filename,'Count_Neurons',...
