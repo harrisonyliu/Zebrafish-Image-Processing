@@ -1,4 +1,4 @@
-function addToDatabase(datablock)
+function addToDatabase(datablock, outputFolder)
 %This function will save a datablock produced by the functon calcSSMD into
 %an Excel file that contains data from each plate screened thus far. This
 %function first opens the Excel file, checks to see if any plates of the
@@ -6,9 +6,9 @@ function addToDatabase(datablock)
 %with the new data. Otherwise it will insert the new datablock into the
 %Excel file. This way we have a centralized database that we can reference
 %and compare different week's screening results against.
-pathname = 'F:\Analyses\Screening Results';
+
 fname = 'CURRENT Consolidated Screen Data.xls'; %Note: you can start a new consolidated database by changing this name.
-fullname = fullfile(pathname,fname);
+fullname = fullfile(outputFolder,fname);
 
 %First step is to read the file, we need to check if our current plate has
 %any duplicates (and therefore would need to be overwritten)
@@ -17,7 +17,7 @@ try
     %Let's also copy the old file and save it in case something goes wrong (so
     %we don't lose all our precious data!)
     newname = ['OLD ' fname ' ' date '.xls'];
-    copyfile(fullname,fullfile(pathname,newname));
+    copyfile(fullname,fullfile(outputFolder,newname));
     delete(fullname);
     %Unfortunately matlab does a very messy job of reading the Excel files
     %since the text and number elements are separated. Therefore we'll have to
@@ -49,8 +49,11 @@ try
     
     datablock_new = [datablock_old; datablock(2:end,:)]; %Now let's add the data (we have ensured there are no repeated plates)
     xlswrite(fullname,datablock_new);
-catch
+    msgbox(['Scores from this plate has been successfully added to the database! You can find it at: ' ...
+        fullname]);
+catch err
     msgbox('Note: either an error occured, or this is a new consolidated database!');
     %If the file hasn't been created yet, we can just write in the data!
-    xlswrite(['NEW or error ' fullname],datablock);
+    fname = ['NEW or error ' fname]; fullname = fullfile(outputFolder,fname);
+    xlswrite(fullname,datablock);
 end

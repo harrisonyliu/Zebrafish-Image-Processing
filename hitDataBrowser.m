@@ -52,13 +52,20 @@ function hitDataBrowser_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to hitDataBrowser (see VARARGIN)
 
+%The first argument is the filename that contains all the screening data.
+%the second argument is where the saved hit list should be output (the
+%folder name)
+handles.databaseFname = varargin{1};
+handles.hitListFolder = varargin{2};
+
 % Choose default command line output for hitDataBrowser
 handles.output = hObject;
 handles.hitlist_header = {'Cmpd_ID', 'SSMD', 'Brain Health Score', 'NumObs'};
 handles.hitlist = [];
 handles.g = [];
 handles.pind_unique = [];
-handles.pathname = 'F:\Analyses\Screening Results';
+
+set(handles.edit1,'String',handles.databaseFname);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -181,7 +188,7 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 fname = ['Selected Hits - ' date];
-fullname = fullfile(handles.pathname,fname);
+fullname = fullfile(handles.hitListFolder,fname);
 xlswrite(fullname,[handles.hitlist_header;handles.hitlist]);
 msgbox(['File has been saved! Find it at: ' fullname]);
 
