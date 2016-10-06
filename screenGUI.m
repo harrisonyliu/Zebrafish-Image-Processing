@@ -22,7 +22,7 @@ function varargout = screenGUI(varargin)
 
 % Edit the above text to modify the response to help screenGUI
 
-% Last Modified by GUIDE v2.5 22-Sep-2016 13:34:31
+% Last Modified by GUIDE v2.5 23-Sep-2016 14:49:12
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -62,6 +62,7 @@ handles.cellProfilerDir = 'D:\Harrison\Data\Zebrafish - CellProfiler Output';
 handles.screeningScoreDatabase = 'D:\Harrison\Data\Zebrafish Screening Results\Consolidated Compound Scores';
 handles.screeningScoreFname = 'CURRENT Consolidated Screen Data.xls';
 handles.hitListDir = 'D:\Harrison\Data\Zebrafish Screening Results\Consolidated Hit List';
+handles.compoundDatabase = 'D:\Harrison\Data\Zebrafish Screening Results\Bioactive Compound Database';
 
 setDefaultDirectories(handles); %Using the information above, we set all the defaults directories (this will vary
 %by the computer used. For example on my personal computer the data is
@@ -81,6 +82,7 @@ set(handles.edit9,'String',handles.screeningScoreDatabase);
 set(handles.edit3,'String',fullfile(handles.screeningScoreDatabase,...
     handles.screeningScoreFname));
 set(handles.edit10,'String',handles.hitListDir);
+set(handles.edit11,'String',handles.compoundDatabase);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -120,7 +122,8 @@ end
 function pushbutton3_Callback(hObject, eventdata, handles)
 screenDatabaseFname = get(handles.edit3,'String');
 hitListDir = get(handles.edit10,'String');
-hitDataBrowser(screenDatabaseFname,hitListDir);
+cmpdIDdir = get(handles.edit12,'String');
+hitDataBrowser(screenDatabaseFname,hitListDir,cmpdIDdir);
 % hObject    handle to pushbutton3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -166,10 +169,12 @@ if curr == 1 %Keep yellowstone defaults
     handles.cellProfilerDir = 'D:\Harrison\Data\Zebrafish - CellProfiler Output';
     handles.screeningScoreDatabase = 'D:\Harrison\Data\Zebrafish Screening Results\Consolidated Compound Scores';
     handles.hitListDir = 'D:\Harrison\Data\Zebrafish Screening Results\Consolidated Hit List';
+    handles.compoundDatabase = 'D:\Harrison\Data\Zebrafish Screening Results\Bioactive Compound Database';
 elseif curr == 2 %Switch to my defaults
     handles.cellProfilerDir = 'Y:\Harrison\Data\Zebrafish - CellProfiler Output';
     handles.screeningScoreDatabase = 'Y:\Harrison\Data\Zebrafish Screening Results\Consolidated Compound Scores';
     handles.hitListDir = 'Y:\Harrison\Data\Zebrafish Screening Results\Consolidated Hit List';
+    handles.compoundDatabase = 'Y:\Harrison\Data\Zebrafish Screening Results\Bioactive Compound Database';
 end
 setDefaultDirectories(handles);
 guidata(hObject,handles);
@@ -193,7 +198,7 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[fname,pathname] = uigetfile([handles.cellProfilerDir '/*.csv']);
+[fname,pathname] = uigetfile([get(handles.edit8,'String') '/*.csv']);
 filename = fullfile(pathname,fname);
 set(handles.edit1,'String',filename);
 
@@ -327,3 +332,59 @@ function edit10_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+
+function edit11_Callback(hObject, eventdata, handles)
+% hObject    handle to edit11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit11 as text
+%        str2double(get(hObject,'String')) returns contents of edit11 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit11_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit12_Callback(hObject, eventdata, handles)
+% hObject    handle to edit12 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit12 as text
+%        str2double(get(hObject,'String')) returns contents of edit12 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit12_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit12 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in pushbutton11.
+function pushbutton11_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+default_dir = get(handles.edit11,'String');
+[fname,pathname] = uigetfile([default_dir '/*.xlsm']);
+set(handles.edit12,'String',fullfile(pathname,fname));

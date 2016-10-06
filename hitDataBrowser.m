@@ -57,10 +57,11 @@ function hitDataBrowser_OpeningFcn(hObject, eventdata, handles, varargin)
 %folder name)
 handles.databaseFname = varargin{1};
 handles.hitListFolder = varargin{2};
+handles.cmpdIDdir = varargin{3};
 
 % Choose default command line output for hitDataBrowser
 handles.output = hObject;
-handles.hitlist_header = {'Cmpd_ID', 'SSMD', 'Brain Health Score', 'NumObs'};
+handles.hitlist_header = {'Cmpd_ID', 'SSMD', 'Brain Health Score', 'NumObs','SELLECKCHEM BIOACTIVE ID'};
 handles.hitlist = [];
 handles.g = [];
 handles.pind_unique = [];
@@ -156,8 +157,7 @@ function pushbutton3_Callback(hObject, eventdata, handles)
 %However, this will be off by ONE due to the exclusion of the header (e.g.
 %plate, date, etc. This means that a pind of 45 represents row 46 in
 %handles.datablock!
-pind
-handles.pind = pind{1}%find(~cellfun(@isempty,pind))}; %To start off let's find the data points that were just selected
+handles.pind = pind{1};%find(~cellfun(@isempty,pind))}; %To start off let's find the data points that were just selected
 handles.pind_unique = [handles.pind_unique; handles.pind]; %Let's add these data points to an ever growing list
 handles.pind_unique = unique(handles.pind_unique); %Let's remove any duplicates
 g_data_bhs = handles.bhs(handles.pind_unique); g_data_ssmd = handles.ssmd(handles.pind_unique); %Let's grab the data from the selected data points so we can plot which ones we've selected so far
@@ -189,8 +189,10 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 fname = ['Selected Hits - ' date];
 fullname = fullfile(handles.hitListFolder,fname);
+handles.hitlist = findCmpdID(handles.hitlist,handles.cmpdIDdir);%Let's find the identity of our hits
 xlswrite(fullname,[handles.hitlist_header;handles.hitlist]);
 msgbox(['File has been saved! Find it at: ' fullname]);
+guidata(hObject,handles);
 
 
 % --- Executes on selection change in listbox1.
