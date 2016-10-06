@@ -92,8 +92,9 @@ parent_folder = get(handles.edit1,'String');
 if iscell(parent_folder) == 1
     parent_folder = parent_folder{1};
 end
-
-handles.folder_names = dir(parent_folder);
+temp = dir(parent_folder);
+dirFlag = [temp.isdir]; %We only want to keep folders, any other files should be ignored
+handles.folder_names = temp(dirFlag);
 guidata(hObject, handles);
 
 

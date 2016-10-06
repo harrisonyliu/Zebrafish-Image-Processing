@@ -10,13 +10,7 @@ filename = fullfile(pathname,fname);
 plate_struct = separateReplicatePlates(filename,...
     'Intensity_TotalIntensity_ghettoconv');
 
-%Now create the metascore that combines all four features together
-% w = [0.3425, -1.1846, -0.4643, -0.9152]; %Weight vectors from the SVM training
-% plate_struct.metascore = calc_metascore(w,plate_struct,[],[]);
-
 %Next tell the computer which wells should be grouped together
-% platemap.sixtyNAC = createWellGroups('A', 'A', 1, 12);
-% platemap.onetwentyNAC = createWellGroups('B', 'B', 1, 12);
 platemap.DMSO = createWellGroups('A', 'H', 1, 1);
 platemap.Mtz = createWellGroups('A', 'H', 12, 12);
 platemap.col2 = createWellGroups('A', 'H', 2, 2);

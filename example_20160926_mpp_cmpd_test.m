@@ -1,4 +1,4 @@
-% close all
+close all
 clear all
 
 %% Plate 1
