@@ -101,6 +101,7 @@ handles.err_matrix(well_row, well_column) = -1;
 guidata(hObject, handles);
 next_image(hObject, eventdata, handles)
 
+
 function [wellname, well_row, well_column] = extract_wellname(im_name)
 letter_array = 'ABCDEFGH';
 [temp, im_fname] = fileparts(im_name);
@@ -116,6 +117,7 @@ elseif isempty(strfind(wellname,'(')) == 0
 else
     well_column = str2num(wellname(end-1:end));
 end
+
 
 function next_image(hObject, eventdata, handles)
 if handles.curr_im <= numel(handles.file_dir)-1

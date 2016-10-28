@@ -475,3 +475,38 @@ function figure1_WindowButtonDownFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 end
+
+% --- Executes on button press in pushbutton7.
+function pushbutton7_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+delete_image(handles.well_name, fullfile(handles.dir_name,'Extracted neurons'));
+delete_image(handles.well_name, fullfile(handles.dir_name,'Extracted neurons filtered'));
+end
+
+function delete_image(well_name, save_dir)
+[temp, parent] = fileparts(save_dir);
+[temp, plate_name] = fileparts(temp);
+[temp, assay_date] = fileparts(temp);
+
+if exist(save_dir) == 0
+    mkdir(save_dir);
+end
+
+%Saving the images
+well = strfind(well_name,'(');
+if isempty(well) == 0
+    newname = [assay_date '_' plate_name '_' well_name 'wv Cy3 - Cy3).tif'];
+else
+    newname = [assay_date '_' plate_name '_' well_name '(wv Cy3 - Cy3).tif'];
+end
+fname = fullfile(save_dir, newname);
+
+try
+    delete(fname);
+catch err
+    msgbox('No image to delete');
+    err
+end
+end

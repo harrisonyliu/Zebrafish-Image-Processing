@@ -22,7 +22,7 @@ function varargout = fishImageBrowser(varargin)
 
 % Edit the above text to modify the response to help fishImageBrowser
 
-% Last Modified by GUIDE v2.5 23-Sep-2015 16:30:51
+% Last Modified by GUIDE v2.5 28-Oct-2016 14:10:57
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -480,3 +480,37 @@ function slider2_CreateFcn(hObject, eventdata, handles)
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
+
+% --- Executes on button press in pushbutton7.
+    function pushbutton7_Callback(hObject, eventdata, handles)
+        % hObject    handle to pushbutton7 (see GCBO)
+        % eventdata  reserved - to be defined in a future version of MATLAB
+        % handles    structure with handles and user data (see GUIDATA)
+        delete_image(handles.well_name, fullfile(handles.dir_name,'Extracted neurons'));
+        delete_image(handles.well_name, fullfile(handles.dir_name,'Extracted neurons filtered'));
+        
+        
+        function delete_image(well_name, save_dir)
+            [temp, parent] = fileparts(save_dir);
+            [temp, plate_name] = fileparts(temp);
+            [temp, assay_date] = fileparts(temp);
+            
+            if exist(save_dir) == 0
+                mkdir(save_dir);
+            end
+            
+            %Saving the images
+            well = strfind(well_name,'(');
+            if isempty(well) == 0
+                newname = [assay_date '_' plate_name '_' well_name 'wv Cy3 - Cy3).tif'];
+            else
+                newname = [assay_date '_' plate_name '_' well_name '(wv Cy3 - Cy3).tif'];
+            end
+            fname = fullfile(save_dir, newname);
+            
+            try
+                delete(fname);
+            catch err
+                msgbox('No image to delete');
+                err
+            end
